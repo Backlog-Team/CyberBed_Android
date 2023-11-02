@@ -1,0 +1,19 @@
+package com.example.plantingapp.ui.components
+
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.Tab
+
+@Composable
+private fun RowScope.TabNavigationItem(tab: Tab) {
+    val tabNavigator = LocalTabNavigator.current
+    TODO("""
+    BottomNavigationItem(
+        selected = tabNavigator.current == tab,
+        onClick = { tabNavigator.current = tab },
+        icon = { Icon(painter = tab.icon, contentDescription = tab.title) }
+    )"""
+    )
+}
