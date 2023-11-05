@@ -160,9 +160,6 @@ fun CameraScreen(
                 },
                 content = {
                     Box(
-                        //painter = painterResource(id = R.drawable.ic_rotate),
-                        //contentDescription = "Take picture",
-                        //tint = Color.White,
                         modifier = Modifier
                             .size(70.dp)
                             .clip(RoundedCornerShape(8.dp))

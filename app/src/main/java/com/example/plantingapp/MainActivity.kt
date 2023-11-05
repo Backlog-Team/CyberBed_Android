@@ -1,15 +1,15 @@
 package com.example.plantingapp
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,22 +17,26 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.example.plantingapp.ui.screens.camera.CameraScreen
+import com.example.plantingapp.ui.components.TabNavigationItem
+import com.example.plantingapp.ui.screens.camera.CameraTab
+import com.example.plantingapp.ui.screens.explore.ExploreTab
 import com.example.plantingapp.ui.screens.home.HomeTab
+import com.example.plantingapp.ui.screens.profile.ProfileTab
+import com.example.plantingapp.ui.screens.saved.SavedTab
 import com.example.plantingapp.ui.theme.PlantingAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.io.File
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+
 
 class MainActivity : ComponentActivity() {
     private lateinit var outputDirectory: File
@@ -82,9 +86,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i("kilo", this.resources.configuration.screenWidthDp.toString())
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         requestCameraPermission()
 
@@ -93,24 +99,43 @@ class MainActivity : ComponentActivity() {
             SideEffect {
                 // set transparent color so that our image is visible
                 // behind the status bar
-                systemUiController.setStatusBarColor(color = Color.Transparent)
+                systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
                 systemUiController.setNavigationBarColor(color = Color.Transparent)
             }
-            /*TabNavigator(HomeTab) {
-                Scaffold(
-                    content = {
-                        CurrentTab()
-                    },
-                    bottomBar = {
-                        BottomNavigation {
-                            TabNavigationItem(HomeTab)
-                            TabNavigationItem(FavoritesTab)
-                            TabNavigationItem(ProfileTab)
+            TabNavigator(HomeTab) {
+                //PlantingAppTheme {
+                    Scaffold(
+                        content = {
+                            CurrentTab()
+                        },
+                        bottomBar = {
+                            NavigationBar(
+                                containerColor = Color.White,
+                                modifier = Modifier
+                                    .shadow(100.dp)
+                            ) {
+                                TabNavigationItem(HomeTab,
+                                    painterResource(R.drawable.ic_home_selected),
+                                    painterResource(R.drawable.ic_home_unselected)
+                                )
+                                TabNavigationItem(ExploreTab,
+                                    painterResource(R.drawable.ic_explore_selected),
+                                    painterResource(R.drawable.ic_explore_unselected))
+                                TabNavigationItem(CameraTab,
+                                    painterResource(R.drawable.ic_scan),
+                                    painterResource(R.drawable.ic_scan))
+                                TabNavigationItem(SavedTab,
+                                    painterResource(R.drawable.ic_saved_selected),
+                                    painterResource(R.drawable.ic_saved_unselected))
+                                TabNavigationItem(ProfileTab,
+                                    painterResource(R.drawable.ic_profile_selected),
+                                    painterResource(R.drawable.ic_profile_unselected))
+                            }
                         }
-                    }
-                )
-            }*/
-            outputDirectory = getOutputDirectory()
+                    )
+             //   }
+            }
+            /*outputDirectory = getOutputDirectory()
             cameraExecutor = Executors.newSingleThreadExecutor()
             if (shouldShowCamera.value) {
                 CameraScreen(
@@ -126,7 +151,7 @@ class MainActivity : ComponentActivity() {
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
-            }
+            }*/
         }
     }
 

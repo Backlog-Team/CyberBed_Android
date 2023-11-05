@@ -1,19 +1,15 @@
-package com.example.plantingapp.ui.screens.home
+package com.example.plantingapp.ui.screens.explore
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-
-object HomeTab : Tab {
+object ExploreTab : Tab {
 
     override val options: TabOptions
         @Composable
         get() {
-            val title = "Home"
+            val title = "Explore"
 
             return remember {
                 TabOptions(
@@ -25,6 +21,6 @@ object HomeTab : Tab {
 
     @Composable
     override fun Content() {
-        HomeScreen()
+        ExploreScreen()
     }
 }

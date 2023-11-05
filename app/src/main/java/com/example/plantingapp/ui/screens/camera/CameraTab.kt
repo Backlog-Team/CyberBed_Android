@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import coil.compose.rememberAsyncImagePainter
+import com.example.plantingapp.ui.screens.empty.EmptyScreen
+import com.example.plantingapp.ui.screens.home.HomeScreen
 import java.util.concurrent.Executors
 
 object CameraTab : Tab {
@@ -20,7 +22,7 @@ object CameraTab : Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val title = "Camera"
+            val title = "Scan"
             val icon = rememberVectorPainter(Icons.Default.Camera)
 
             return remember {
@@ -34,6 +36,6 @@ object CameraTab : Tab {
 
     @Composable
     override fun Content() {
-        TODO("camera screen")
+        EmptyScreen()
     }
 }
