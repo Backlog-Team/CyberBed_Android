@@ -1,21 +1,15 @@
 package com.example.plantingapp.ui.screens.camera
 
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import coil.compose.rememberAsyncImagePainter
-import com.example.plantingapp.ui.screens.empty.EmptyScreen
-import com.example.plantingapp.ui.screens.home.HomeScreen
-import java.util.concurrent.Executors
+import org.koin.androidx.compose.getViewModel
 
 object CameraTab : Tab {
 
@@ -36,6 +30,7 @@ object CameraTab : Tab {
 
     @Composable
     override fun Content() {
-        EmptyScreen()
+        val screenModel = getViewModel<CameraViewModel>()
+        Navigator(CameraScreen(screenModel))
     }
 }

@@ -1,29 +1,70 @@
 package com.example.plantingapp.ui.screens.camera
 
-import android.content.pm.PackageManager
-import android.net.Uri
+import android.graphics.Bitmap
 import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.plantingapp.R
-import java.io.File
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.plantingapp.data.repository.PlantRepositoryInterface
+import com.example.plantingapp.domain.models.Plant
+import com.example.plantingapp.domain.usecases.CameraUseCase
+import com.example.plantingapp.domain.usecases.Resource
+import com.example.plantingapp.ui.LoadingStates
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-class CameraViewModel {
-    private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var photoUri: Uri
-    private var shouldShowPhoto: MutableState<Boolean> = mutableStateOf(false)
-    private var shouldShowCamera: MutableState<Boolean> = mutableStateOf(false)
+class CameraViewModel(
+    repository: PlantRepositoryInterface,
+): ViewModel() {
+    var lensFacing = CameraSelector.LENS_FACING_BACK
+    private val useCase = CameraUseCase(repository)
+    private val _plants = MutableStateFlow(emptyList<Plant>())
+    val plants: StateFlow<List<Plant>> = _plants
+    private val _loadingStates = MutableStateFlow(LoadingStates.Loading)
+    val loadingState = _loadingStates.asStateFlow()
+    fun recognizePhoto(image: ImageProxy) {
+        val img: Bitmap = image.toBitmap()
+        viewModelScope.launch {
+            useCase.recognizeImage(img)
+                .collect {
+                    when (it) {
+                        is Resource.Internet -> _loadingStates.value = LoadingStates.Error
 
-    private fun handleImageCapture(uri: Uri) {
-        Log.i("kilo", "Image captured: $uri")
-        shouldShowCamera.value = false
-        photoUri = uri
-        shouldShowPhoto.value = true
+                        is Resource.Loading -> LoadingStates.Loading
+
+                        is Resource.Success -> {
+                            _plants.value = it.data ?: listOf()
+                            _loadingStates.value = LoadingStates.Success
+                        }
+
+                        else -> _loadingStates.value = LoadingStates.Error
+                    }
+                }
+        }
     }
 
+    fun takePhoto(
+        imageCapture: ImageCapture,
+        cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    ) {
+        imageCapture.takePicture(cameraExecutor, object: ImageCapture.OnImageCapturedCallback() {
+            override fun onError(exception: ImageCaptureException) {
+                Log.e("kilo", "Take photo error:", exception)
+                onError(exception)
+            }
+
+            override fun onCaptureSuccess(image: ImageProxy) {
+                super.onCaptureSuccess(image)
+                recognizePhoto(image)
+                cameraExecutor.shutdown()
+            }
+        })
+    }
 }

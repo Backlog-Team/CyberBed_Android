@@ -1,13 +1,14 @@
-package com.example.plantingapp.ui.screens.explore
+package com.example.plantingapp.ui.screens.explore.search
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
+import com.example.plantingapp.ui.screens.explore.ExploreViewModel
 
-class ExploreScreen(
+class SearchScreen (
     private val viewModel: ExploreViewModel
 ): Screen {
     @Composable
     override fun Content() {
-        ExploreView(viewModel)
+        SearchView(viewModel)
     }
 }

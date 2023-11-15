@@ -1,29 +1,27 @@
-package com.example.plantingapp.ui.screens.explore
+package com.example.plantingapp.ui.screens.settings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import org.koin.androidx.compose.getViewModel
 
-object ExploreTab : Tab {
-
+object SettingsTab: Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val title = "Explore"
+            val title = "Settings"
 
             return remember {
                 TabOptions(
                     index = 0u,
-                    title = title,
+                    title = title
                 )
             }
         }
 
     @Composable
     override fun Content() {
-        Navigator(ExploreScreen(getViewModel()))
+        Navigator(SettingsScreen())
     }
 }

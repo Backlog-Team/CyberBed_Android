@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.example.plantingapp.ui.screens.empty.EmptyScreen
-import com.example.plantingapp.ui.screens.explore.ExploreScreen
 
 object SavedTab : Tab {
 

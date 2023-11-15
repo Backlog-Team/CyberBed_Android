@@ -3,21 +3,17 @@ package com.example.plantingapp.ui.components
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.tab.Tab
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.Tab
 import com.example.plantingapp.ui.theme.GreenPrimary
-import com.example.plantingapp.ui.theme.PurpleGrey80
 import com.example.plantingapp.ui.theme.UnselectedGray
 
 @Composable
@@ -45,5 +41,5 @@ fun RowScope.TabNavigationItem(tab: Tab, icSelected: Painter, icUnselected: Pain
             unselectedIconColor = Color.Unspecified,
             unselectedTextColor = UnselectedGray
         )
-        )
+    )
 }

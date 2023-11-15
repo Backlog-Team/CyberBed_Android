@@ -94,5 +94,25 @@ dependencies {
     implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
     implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
     implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+    implementation("cafe.adriel.voyager:voyager-androidx:$voyagerVersion")
+    implementation("cafe.adriel.voyager:voyager-koin:$voyagerVersion")
+
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //OkHttp Logging Interceptor
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    //GSON
+    implementation("com.google.code.gson:gson:2.10")
+
+    //Koin
+    val koinAndroidVersion = "3.5.0"
+    implementation("io.insert-koin:koin-android:$koinAndroidVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinAndroidVersion")
+
+    //Paging
+    implementation("androidx.paging:paging-compose:3.3.0-alpha02")
 
 }
