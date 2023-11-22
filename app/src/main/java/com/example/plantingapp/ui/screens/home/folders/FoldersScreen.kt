@@ -1,13 +1,13 @@
-package com.example.plantingapp.ui.screens.auth
+package com.example.plantingapp.ui.screens.home.folders
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 
-class SignupScreen(
-    private val viewModel: AuthViewModel
+class FoldersScreen(
+    private val viewModel: FoldersViewModel
 ): Screen {
     @Composable
     override fun Content() {
-        SignupView(viewModel)
+        FoldersView(viewModel)
     }
 }

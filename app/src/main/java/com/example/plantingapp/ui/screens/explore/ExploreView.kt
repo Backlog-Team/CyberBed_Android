@@ -1,24 +1,39 @@
 package com.example.plantingapp.ui.screens.explore
 
-//import androidx.paging.compose.items
-
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,8 +43,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.PlantCard
-import com.example.plantingapp.ui.screens.explore.search.SearchScreen
+import com.example.plantingapp.ui.screens.explore.search.SearchField
+import com.example.plantingapp.ui.screens.explore.search.SearchViewModel
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExploreView(
     viewModel: ExploreViewModel
@@ -37,11 +56,18 @@ fun ExploreView(
     val navigator = LocalNavigator.current
     val lazyListState = rememberLazyListState()
     val plants = viewModel.pagingData.value.collectAsLazyPagingItems()
+    val searchViewModel = getViewModel<SearchViewModel>()
+
+    val refreshing = viewModel.refreshing.value
+    val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.refresh(plants) })
+
+    val scope = rememberCoroutineScope()
+    
+    var showSearch by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
     ) {
         Row(
             modifier = Modifier
@@ -60,9 +86,7 @@ fun ExploreView(
             ) {
                 IconButton(
                     onClick = {
-                        if (navigator != null) {
-                            navigator.push(SearchScreen(viewModel))
-                        }
+                        showSearch = !showSearch
                     },
                     content = {
                         Icon(
@@ -74,31 +98,97 @@ fun ExploreView(
                         )
                     }
                 )
+                IconButton(
+                    onClick = {
+                        Log.i("kilo", "Add clicked")
+                    },
+                    content = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_add),
+                            contentDescription = "Add",
+                            tint = Color.Black,
+                            modifier = Modifier
+                                .size(20.dp)
+                        )
+                    }
+                )
             }
         }
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            plants.let {
-                items(plants.itemCount) {
-                        index ->
-                    if (plants[index] != null)
-                        PlantCard(plants[index]!!)
-                }
-                if (it.loadState.append is LoadState.Loading) {
-                    item {
-                        CircularProgressIndicator()
+        Box(modifier = Modifier.fillMaxWidth()) {
+            if (showSearch) SearchField(viewModel = searchViewModel)
+            Box(Modifier.pullRefresh(pullRefreshState)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    state = lazyListState,
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    plants.let {
+                        if (it.loadState.refresh is LoadState.NotLoading) {
+                            items(plants.itemCount) { index ->
+                                if (plants[index] != null)
+                                    PlantCard(plants[index]!!)
+                            }
+                            if (it.loadState.append is LoadState.Loading) {
+                                item {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                            if (it.loadState.append is LoadState.Error) {
+                                item {
+                                    Text("LoadingError")
+                                    Button(onClick = { it.retry() }) {
+                                        Text("Retry")
+                                    }
+                                }
+                            }
+                        } else if (it.loadState.refresh is LoadState.Loading) {
+                            item {
+                                Box(modifier = Modifier.fillParentMaxSize()) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.align(Alignment.Center)
+                                    )
+                                }
+                            }
+                        } else if (it.loadState.refresh is LoadState.Error) {
+                            item {
+                                Box(modifier = Modifier.fillParentMaxSize()) {
+                                    Text(
+                                        "Error",
+                                        modifier = Modifier.align(Alignment.Center)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
-                if (it.loadState.append is LoadState.Error) {
-                    item {
-                        Text("LoadingError")
+                PullRefreshIndicator(
+                    refreshing,
+                    pullRefreshState,
+                    Modifier.align(Alignment.TopCenter)
+                )
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .clip(CircleShape),
+                    onClick = {
+                        scope.launch {
+                            lazyListState.animateScrollToItem(index = 0)
+                        }
+                    },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = Color.LightGray
+                    ),
+                    content = {
+                        Icon(
+                            painter = rememberVectorPainter(image = Icons.Default.ArrowUpward),
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
-                }
+                )
             }
         }
     }

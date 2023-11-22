@@ -1,8 +1,5 @@
-@file:JvmName("LoginViewKt")
-
 package com.example.plantingapp.ui.screens.auth
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,35 +9,30 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.plantingapp.ui.LoadingStates
 import com.example.plantingapp.ui.screens.BaseScreen
 import com.example.plantingapp.ui.screens.auth.components.PasswordField
 
-
 @Composable
-fun LoginView(
+fun SignupView(
     viewModel: AuthViewModel
 ) {
     val navigator = LocalNavigator.currentOrThrow
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordRepeat by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
-    var showErrMsg by remember { mutableStateOf(false) }
-    val errMgs = viewModel.message.collectAsState()
+    var passwordRepeatVisibility by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -67,34 +59,22 @@ fun LoginView(
             onValueChange = { password = it },
             visibility = passwordVisibility,
             onVisibilityChange = { passwordVisibility = !passwordVisibility })
-        if (showErrMsg) {
 
-            Text(
-                text = errMgs.value,
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.Red
-            )
-        }
+        PasswordField(
+            label = "Repeat",
+            password = passwordRepeat,
+            onValueChange = { passwordRepeat = it },
+            visibility = passwordRepeatVisibility,
+            onVisibilityChange = { passwordRepeatVisibility = !passwordRepeatVisibility })
+
         Button(
             onClick = {
-                viewModel.login(username, password)
-                showErrMsg = if (viewModel.loadingState.value == LoadingStates.Success) {
-                    navigator.replace(BaseScreen())
-                    false
-                } else
-                    true
-
+                viewModel.signup(username, password)
+                navigator.replace(BaseScreen())
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Войти")
+            Text("Зарегистрироваться")
         }
-
-        Text(
-            modifier = Modifier.clickable { navigator.push(SignupScreen(viewModel)) },
-            text = "Нет аккаунта? Зарегистрируйтесь!",
-            textDecoration = TextDecoration.Underline,
-            fontSize = 14.sp
-        )
     }
 }

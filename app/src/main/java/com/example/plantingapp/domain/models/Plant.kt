@@ -1,9 +1,6 @@
 package com.example.plantingapp.domain.models
 
-import android.graphics.Bitmap
-import com.example.plantingapp.ui.LoadingStates
 import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.flow.MutableStateFlow
 
 data class Plant (
     @SerializedName("CreatedAt") val createdAt: String? = null,
@@ -15,6 +12,4 @@ data class Plant (
     @SerializedName("display_pid") val displayPid: String? = null,
     @SerializedName("maintenance") val maintenance: Maintenance? = null,
     @SerializedName("parameter") val parameter: Parameter? = null,
-    var bitImage: Bitmap? = null,
-    var _loadingState: MutableStateFlow<LoadingStates> = MutableStateFlow(LoadingStates.Loading)
 )

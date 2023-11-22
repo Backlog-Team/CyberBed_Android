@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.plantingapp.management.PermissionsManager
-import com.example.plantingapp.ui.screens.auth.LoginScreen
+import com.example.plantingapp.ui.screens.auth.SplashScreen
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.REQUEST_ENABLE_BT
 import com.example.plantingapp.ui.theme.PlantingAppTheme
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     )
                     systemUiController.setNavigationBarColor(color = Color.Transparent)
                 }
-                Navigator(LoginScreen(getViewModel()))
+                Navigator(SplashScreen(getViewModel()))
             }
         }
     }

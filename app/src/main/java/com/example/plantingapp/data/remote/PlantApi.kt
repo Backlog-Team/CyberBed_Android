@@ -1,5 +1,7 @@
 package com.example.plantingapp.data.remote
 
+import com.example.plantingapp.domain.models.CustomPlant
+import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.models.User
 import com.example.plantingapp.domain.models.UserCreated
@@ -9,8 +11,10 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -21,20 +25,21 @@ interface PlantApi {
     @GET("/api/auth")
     suspend fun auth(): Response<UserCreated>
 
+    @Headers("Access-Control-Allow-Credentials: true")
     @POST("/api/signup")
     suspend fun signup(
         @Body user: User
     ): Response<UserCreated>
 
+
+    @Headers("Access-Control-Allow-Credentials: true")
     @POST("/api/login")
     suspend fun login(
         @Body user: User
     ): Response<UserCreated>
 
     @DELETE("/api/logout")
-    suspend fun logout(
-        @Body user: User
-    ): Response<Unit>
+    suspend fun logout(): Response<Unit>
 
 
     // From library
@@ -51,7 +56,7 @@ interface PlantApi {
 
     @GET("api/search/plants")
     suspend fun searchPlantByName(
-        @Query("name") plantName: String?
+        @Query("name") plantName: String
     ): Response<List<Plant>>
 
     @GET("api/search/plants/{plantID}/image")
@@ -81,6 +86,78 @@ interface PlantApi {
     @DELETE("api/plants/{plantID}")
     suspend fun deletePlant(
         @Path("plantID") plantID: Int
+    ): Response<Unit>
+
+    //Saved
+    @POST("api/plants/{plantID}/saved")
+    suspend fun savePlant(
+        @Path("plantID") plantID: Int
+    ): Response<Unit>
+
+    @GET("api/plants/saved")
+    suspend fun getSavedPlants(): Response<List<Plant>>
+
+    @DELETE("api/plants/{plantID}/saved")
+    suspend fun delSavedPlant(
+        @Path("plantID") plantID: Int
+    ): Response<Unit>
+
+    //Custom
+    @Multipart
+    @POST("api/custom/plants")
+    suspend fun createCustomPlant(
+        @Part plantName: MultipartBody.Part,
+        @Part about: MultipartBody.Part,
+        @Part image: MultipartBody.Part,
+    ): Response<CustomPlant>
+
+    @GET("api/custom/plants")
+    suspend fun getCustomPlants(): Response<List<CustomPlant>>
+
+    @GET("api/custom/plants/{plantID}")
+    suspend fun getCustomPlant(
+        @Path("plantID") plantID: Int
+    ): Response<CustomPlant>
+
+    @Multipart
+    @PUT("api/custom/plants/{plantID}")
+    suspend fun changeCustomPlant(
+        @Path("plantID") plantID: Int,
+
+        @Part plantName: MultipartBody.Part,
+        @Part about: MultipartBody.Part,
+        @Part image: MultipartBody.Part,
+    ): Response<Unit>
+
+    //Folders
+    @POST("api/folders")
+    suspend fun createFolder(
+        @Query("name") folderName: String
+    ): Response<UserCreated>
+
+    @GET("api/folders")
+    suspend fun getFolders(): Response<List<Folder>>
+
+    @POST("api/folders/{folderID}/plants/{plantID}")
+    suspend fun addPlantToFolder(
+        @Path("folderID") folderID: Int,
+        @Path("plantID") plantID: Int
+    ): Response<Unit>
+
+    @DELETE("api/folders/{folderID}/plants/{plantID}")
+    suspend fun delPlantFromFolder(
+        @Path("folderID") folderID: Int,
+        @Path("plantID") plantID: Int
+    ): Response<Unit>
+
+    @GET("api/folders/{folderID}/plants")
+    suspend fun getPlantsFromFolder(
+        @Path("folderID") folderID: Int,
+    ): Response<List<Plant>>
+
+    @DELETE("api/folders/{folderID}")
+    suspend fun delFolder(
+        @Path("folderID") folderID: Int,
     ): Response<Unit>
 }
 

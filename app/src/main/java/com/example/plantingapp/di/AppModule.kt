@@ -1,12 +1,16 @@
 package com.example.plantingapp.di
 
 import android.util.Log
+import android.webkit.CookieManager
 import com.example.plantingapp.data.remote.PlantApi
 import com.example.plantingapp.data.repository.PlantRepository
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.ui.screens.auth.AuthViewModel
 import com.example.plantingapp.ui.screens.camera.CameraViewModel
 import com.example.plantingapp.ui.screens.explore.ExploreViewModel
+import com.example.plantingapp.ui.screens.explore.search.SearchViewModel
+import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
+import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import okhttp3.Cookie
 import okhttp3.CookieJar
@@ -17,7 +21,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.webkit.CookieManager
 
 val appModule = module {
     single<PlantRepositoryInterface> {
@@ -25,14 +28,19 @@ val appModule = module {
 
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BASIC
-
+/*
+        fun Context.createCookieStore(name: String, persistent: Boolean) = if (persistent) {
+            SharedPreferencesCookieStore(applicationContext, name)
+        } else {
+            InMemoryCookieStore(name)
+        }
+        */
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(logger)
             .cookieJar(
         object:  CookieJar {
             override fun loadForRequest(url: HttpUrl): List<Cookie> {
                 val cookieManager = CookieManager.getInstance()
-
                 val cookies: ArrayList<Cookie> = ArrayList()
                 if (cookieManager.getCookie(url.toString()) != null) {
                     val splitCookies =
@@ -75,8 +83,11 @@ val appModule = module {
         PlantRepository(api)
     }
 
+    viewModel { FoldersViewModel(get()) }
     viewModel { CameraViewModel(get()) }
     viewModel { BluetoothViewModel() }
     viewModel { AuthViewModel(get()) }
     viewModel { ExploreViewModel(get()) }
+    viewModel { SearchViewModel(get()) }
+    viewModel { SavedViewModel(get()) }
 }

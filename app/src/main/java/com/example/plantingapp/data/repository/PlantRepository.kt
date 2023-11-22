@@ -6,6 +6,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.plantingapp.data.paging.PlantPagingSource
 import com.example.plantingapp.data.remote.PlantApi
+import com.example.plantingapp.domain.models.CustomPlant
+import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.models.User
 import com.example.plantingapp.domain.models.UserCreated
@@ -23,11 +25,11 @@ class PlantRepository(
     private val plantApi: PlantApi
 ) : PlantRepositoryInterface {
     override suspend fun auth(): Response<UserCreated> {
-        TODO("Not yet implemented")
+        return plantApi.auth()
     }
 
     override suspend fun signup(user: User): Response<UserCreated> {
-        TODO("Not yet implemented")
+        return plantApi.signup(user)
     }
 
     override suspend fun login(user: User): Response<UserCreated> {
@@ -35,7 +37,7 @@ class PlantRepository(
     }
 
     override suspend fun logout(): Response<Unit> {
-        TODO("Not yet implemented")
+        return plantApi.logout()
     }
 
     override suspend fun recognizeImage(image: Bitmap): Response<List<Plant>> {
@@ -51,10 +53,10 @@ class PlantRepository(
     }
 
     override suspend fun searchPlantById(plantID: Int): Response<Plant> {
-        TODO("Not yet implemented")
+        return plantApi.searchPlantById(plantID)
     }
 
-    override suspend fun searchPlantByName(plantName: String?): Response<List<Plant>> {
+    override suspend fun searchPlantByName(plantName: String): Response<List<Plant>> {
         return plantApi.searchPlantByName(plantName)
     }
 
@@ -72,18 +74,106 @@ class PlantRepository(
     }
 
     override suspend fun addPlant(plantID: Int): Response<Unit> {
-        TODO("Not yet implemented")
+        return plantApi.addPlant(plantID)
     }
 
     override suspend fun getPlants(): Response<List<Plant>> {
-        TODO("Not yet implemented")
+        return plantApi.getPlants()
     }
 
     override suspend fun getPlant(plantID: Int): Response<Plant> {
-        TODO("Not yet implemented")
+        return plantApi.getPlant(plantID)
     }
 
     override suspend fun deletePlant(plantID: Int): Response<Unit> {
-        TODO("Not yet implemented")
+        return plantApi.deletePlant(plantID)
+    }
+
+    override suspend fun savePlant(plantID: Int): Response<Unit> {
+        return plantApi.savePlant(plantID)
+    }
+
+    override suspend fun getSavedPlants(): Response<List<Plant>> {
+        return plantApi.getSavedPlants()
+    }
+
+    override suspend fun delSavedPlant(plantID: Int): Response<Unit> {
+        return plantApi.delSavedPlant(plantID)
+    }
+
+    //Custom
+    override suspend fun createCustomPlant(
+        plantName: String,
+        about: String,
+        image: Bitmap,
+    ): Response<CustomPlant> {
+        val stream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        val byteArray = stream.toByteArray()
+        val imagePart = MultipartBody.Part.createFormData(
+            "images",
+            Random.nextUInt(8000000u).toString().plus(".jpg"),
+            byteArray.toRequestBody("image/*".toMediaTypeOrNull(), 0, byteArray.size)
+        )
+
+        val plantPart = MultipartBody.Part.createFormData("plantName", plantName)
+        val descPart = MultipartBody.Part.createFormData("about", about)
+
+        return plantApi.createCustomPlant(plantPart, descPart, imagePart)
+    }
+
+
+    override suspend fun getCustomPlants(): Response<List<CustomPlant>> {
+        return plantApi.getCustomPlants()
+    }
+
+    override suspend fun getCustomPlant(plantID: Int): Response<CustomPlant>{
+        return plantApi.getCustomPlant(plantID)
+    }
+
+    override suspend fun changeCustomPlant(
+        plantID: Int,
+        plantName: String,
+        about: String,
+        image: Bitmap,
+    ): Response<Unit> {
+        val stream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        val byteArray = stream.toByteArray()
+        val imagePart = MultipartBody.Part.createFormData(
+            "images",
+            Random.nextUInt(8000000u).toString().plus(".jpg"),
+            byteArray.toRequestBody("image/*".toMediaTypeOrNull(), 0, byteArray.size)
+        )
+
+        val plantPart = MultipartBody.Part.createFormData("plantName", plantName)
+        val descPart = MultipartBody.Part.createFormData("about", about)
+
+        return plantApi.changeCustomPlant(plantID, plantPart, descPart, imagePart)
+    }
+
+    //Folders
+    override suspend fun createFolder(folderName: String): Response<UserCreated> {
+        return plantApi.createFolder(folderName)
+    }
+
+    override suspend fun getFolders(): Response<List<Folder>> {
+        return plantApi.getFolders()
+    }
+
+    override suspend fun addPlantToFolder(folderID: Int, plantID: Int): Response<Unit> {
+        return plantApi.addPlantToFolder(folderID, plantID)
+    }
+
+    override suspend fun delPlantFromFolder(folderID: Int, plantID: Int): Response<Unit> {
+        return plantApi.delPlantFromFolder(folderID, plantID)
+    }
+
+    override suspend fun getPlantsFromFolder(folderID: Int): Response<List<Plant>> {
+        return plantApi.getPlantsFromFolder(folderID)
+    }
+
+    override suspend fun delFolder(folderID: Int): Response<Unit> {
+        return plantApi.delFolder(folderID)
     }
 }

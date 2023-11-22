@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.usecases.CameraUseCase
-import com.example.plantingapp.domain.usecases.Resource
+import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.ui.LoadingStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,19 +25,22 @@ class CameraViewModel(
 ): ViewModel() {
     var lensFacing = CameraSelector.LENS_FACING_BACK
     private val useCase = CameraUseCase(repository)
-    private val _plants = MutableStateFlow(emptyList<Plant>())
-    val plants: StateFlow<List<Plant>> = _plants
+    private var _plants = MutableStateFlow(emptyList<Plant>())
+    var plants: StateFlow<List<Plant>> = _plants
+
     private val _loadingStates = MutableStateFlow(LoadingStates.Loading)
     val loadingState = _loadingStates.asStateFlow()
+
     fun recognizePhoto(image: ImageProxy) {
         val img: Bitmap = image.toBitmap()
+
         viewModelScope.launch {
             useCase.recognizeImage(img)
                 .collect {
                     when (it) {
                         is Resource.Internet -> _loadingStates.value = LoadingStates.Error
 
-                        is Resource.Loading -> LoadingStates.Loading
+                        is Resource.Loading -> _loadingStates.value = LoadingStates.Loading
 
                         is Resource.Success -> {
                             _plants.value = it.data ?: listOf()
@@ -62,6 +65,7 @@ class CameraViewModel(
 
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)
+                _plants.value = emptyList()
                 recognizePhoto(image)
                 cameraExecutor.shutdown()
             }

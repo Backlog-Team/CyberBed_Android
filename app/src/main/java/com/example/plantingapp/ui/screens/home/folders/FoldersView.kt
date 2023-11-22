@@ -1,8 +1,10 @@
-package com.example.plantingapp.ui.components
+package com.example.plantingapp.ui.screens.home.folders
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -19,39 +21,23 @@ import androidx.compose.ui.unit.sp
 import com.example.plantingapp.R
 
 @Composable
-fun TabHeader(title: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-        )
+fun FoldersView(
+    viewModel: FoldersViewModel
+) {
+    Column(Modifier.fillMaxSize()) {
         Row(
-            horizontalArrangement = Arrangement.End
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(
-                //TODO(onClick)
-                onClick = {
-                    Log.i("kilo", "Search clicked")
-                },
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "Search",
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(20.dp)
-                    )
-                }
+            Text(
+                text = "Folders",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
             )
             IconButton(
-                //TODO(onClick)
                 onClick = {
                     Log.i("kilo", "Add clicked")
                 },
@@ -65,6 +51,7 @@ fun TabHeader(title: String) {
                     )
                 }
             )
+
         }
     }
 }

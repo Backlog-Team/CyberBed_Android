@@ -7,7 +7,7 @@ import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.models.User
 import com.example.plantingapp.domain.models.UserCreated
 import com.example.plantingapp.domain.usecases.AuthUseCase
-import com.example.plantingapp.domain.usecases.Resource
+import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.ui.LoadingStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,14 +17,18 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     repository: PlantRepositoryInterface
 ): ViewModel() {
-    //val cookie:
-
     private val useCase = AuthUseCase(repository)
     private val _loadingStates = MutableStateFlow(LoadingStates.Loading)
     val loadingState = _loadingStates.asStateFlow()
 
+    private val _message = MutableStateFlow("")
+    val message = _message.asStateFlow()
+
     private val _userId = MutableStateFlow(UserCreated())
     val userId: StateFlow<UserCreated> = _userId
+
+    private val _authState = MutableStateFlow(LoadingStates.Loading)
+    val authState = _authState.asStateFlow()
 
     fun login(username: String, password: String) {
         val user = User(username, password)
@@ -33,7 +37,35 @@ class AuthViewModel(
                 .collect {
                     when (it) {
                         is Resource.Internet -> {
-                            Log.d("kilo", "Internet error")
+                            _loadingStates.value = LoadingStates.Error
+                        }
+
+                        is Resource.Loading -> {
+                            _loadingStates.value = LoadingStates.Loading
+                        }
+
+                        is Resource.Success -> {
+                            _userId.value = it.data ?: UserCreated()
+                            _loadingStates.value = LoadingStates.Success
+                        }
+
+                        else -> {
+                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            _loadingStates.value = LoadingStates.Error
+                            _message.value = "Ошибка авторизации! Попробуйте еще раз!"
+                        }
+                    }
+                }
+        }
+    }
+    fun signup(username: String, password: String) {
+        val user = User(username, password)
+        viewModelScope.launch {
+            useCase.signup(user)
+                .collect {
+                    when (it) {
+                        is Resource.Internet -> {
+                            Log.d("kilo", "error: ${it.message}, data: ${it.data}")
                             _loadingStates.value = LoadingStates.Error
                         }
 
@@ -49,8 +81,32 @@ class AuthViewModel(
                         }
 
                         else -> {
-                            Log.d("kilo", "Some error")
+                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
                             _loadingStates.value = LoadingStates.Error
+                        }
+                    }
+                }
+        }
+    }
+
+    fun auth() {
+        viewModelScope.launch {
+            useCase.auth()
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            _userId.value = it.data ?: UserCreated()
+                            _authState.value = LoadingStates.Success
+                        }
+
+                        is Resource.Loading -> {
+                            _userId.value = it.data ?: UserCreated()
+                            _authState.value = LoadingStates.Loading
+                        }
+
+                        else -> {
+                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            _authState.value = LoadingStates.Error
                         }
                     }
                 }

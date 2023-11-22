@@ -27,8 +27,7 @@ fun BluetoothView(viewModel: BluetoothViewModel){
     var deviceName by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {

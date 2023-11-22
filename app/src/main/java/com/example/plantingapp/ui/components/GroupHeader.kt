@@ -15,12 +15,11 @@ import androidx.compose.ui.unit.sp
 import com.example.plantingapp.ui.theme.GreenPrimary
 
 @Composable
-fun GroupHeader(title: String) {
+fun GroupHeader(title: String, onViewAll: () -> Unit) {
     Row(
         modifier = Modifier
             .padding(vertical = 20.dp)
             .fillMaxWidth(),
-
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
