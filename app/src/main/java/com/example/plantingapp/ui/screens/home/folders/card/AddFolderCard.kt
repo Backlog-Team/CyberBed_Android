@@ -1,6 +1,5 @@
 package com.example.plantingapp.ui.screens.home.folders.card
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.example.plantingapp.ui.theme.GreenBackground
-import com.example.plantingapp.ui.theme.GreenPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,16 +28,16 @@ fun AddFolderCard() {
     Card(
         modifier = Modifier
             .padding(10.dp)
-            .height(100.dp)
-            .width(100.dp),
+            .height(80.dp)
+            .width(80.dp),
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
             containerColor = GreenBackground
         ),
-        border = BorderStroke(
+        /*border = BorderStroke(
             1.dp,
             GreenPrimary
-        ),
+        )*/
         onClick = { showDialog.value = !showDialog.value }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

@@ -2,7 +2,6 @@ package com.example.plantingapp.ui.components
 
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -45,17 +45,22 @@ import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.plantingapp.R
+import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.ui.screens.explore.ExploreViewModel
+import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.shared.details.PlantDetailsScreen
 import com.example.plantingapp.ui.theme.GreenBackground
-import com.example.plantingapp.ui.theme.GreenPrimary
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun PlantCard(plant: Plant, isSaved: MutableState<Boolean> = mutableStateOf(false)) {
+fun PlantCard(
+    plant: Plant,
+    isSaved: MutableState<Boolean> = mutableStateOf(false),
+    isInFolder: Boolean = false,
+    folder: Folder? = null) {
     val navigator = LocalNavigator.current
     val exploreViewModel = getViewModel<ExploreViewModel>()
     val context = LocalContext.current
@@ -79,6 +84,8 @@ fun PlantCard(plant: Plant, isSaved: MutableState<Boolean> = mutableStateOf(fals
         .build()
     imageLoader.enqueue(imageRequest)
     val savedViewModel: SavedViewModel = getViewModel()
+    val folderViewModel: FoldersViewModel = getViewModel()
+
 
     val scope = rememberCoroutineScope()
     Card(
@@ -93,7 +100,7 @@ fun PlantCard(plant: Plant, isSaved: MutableState<Boolean> = mutableStateOf(fals
         colors =  CardDefaults.cardColors(
             containerColor = GreenBackground
         ),
-        border = BorderStroke(1.dp, GreenPrimary)
+        //border = BorderStroke(1.dp, GreenPrimary)
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -139,7 +146,7 @@ fun PlantCard(plant: Plant, isSaved: MutableState<Boolean> = mutableStateOf(fals
                     Text(
                         text = plant.displayPid ?: "-",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Medium
                     )
                 }
                 AsyncImage(
@@ -153,18 +160,36 @@ fun PlantCard(plant: Plant, isSaved: MutableState<Boolean> = mutableStateOf(fals
                 )
             }
 
-            Box(modifier = Modifier.align(Alignment.BottomStart)) {
-                val showDialog =  remember { mutableStateOf(false) }
-
-                IconButton(onClick = { showDialog.value = !showDialog.value }) {
-                    Icon(painter = rememberVectorPainter(image = Icons.Default.Add),
-                        contentDescription = null)
+            if (isInFolder && folder != null) {
+                Box(modifier = Modifier.align(Alignment.BottomStart)) {
+                    IconButton(onClick = {
+                        scope.launch {
+                            folderViewModel.delPlantsFromFolder(folder, plant)
+                            folderViewModel.message.collect {
+                                Toast.makeText(context, it, LENGTH_SHORT).show()
+                            }
+                        }
+                    }) {
+                        Icon(
+                            painter = rememberVectorPainter(image = Icons.Default.Delete),
+                            contentDescription = null
+                        )
+                    }
                 }
+            } else {
+                Box(modifier = Modifier.align(Alignment.BottomStart)) {
+                    val showDialog =  remember { mutableStateOf(false) }
 
-                if(showDialog.value)
-                    FoldersMenu(plant = plant, setShowDialog = {
-                        showDialog.value = it
-                    })
+                    IconButton(onClick = { showDialog.value = !showDialog.value }) {
+                        Icon(painter = rememberVectorPainter(image = Icons.Default.Add),
+                            contentDescription = null)
+                    }
+
+                    if(showDialog.value)
+                        FoldersMenu(plant = plant, setShowDialog = {
+                            showDialog.value = it
+                        })
+                }
             }
         }
     }

@@ -6,11 +6,11 @@ import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 
 class FolderDetailsScreen(
-    folder: Folder,
+    private val folder: Folder,
     private val viewModel: FoldersViewModel
 ): Screen {
     @Composable
     override fun Content() {
-        FolderDetailsView()
+        FolderDetailsView(folder, viewModel)
     }
 }

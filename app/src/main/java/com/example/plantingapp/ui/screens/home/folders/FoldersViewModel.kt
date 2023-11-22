@@ -19,7 +19,8 @@ class FoldersViewModel(
     private val useCase = FoldersUseCase(repository)
     private var _folders = MutableStateFlow(emptyList<Folder>())
     var folders: StateFlow<List<Folder>> = _folders
-
+    private var _plants = MutableStateFlow(emptyList<Plant>())
+    var plants: StateFlow<List<Plant>> = _plants
     private val _loadingStates = MutableStateFlow(LoadingStates.Loading)
     val loadingState = _loadingStates.asStateFlow()
 
@@ -63,7 +64,27 @@ class FoldersViewModel(
         }
     }
 
-    fun delPlantFromFolder(folder: Folder, plant: Plant) {
+    fun getPlantFromFolder(folder: Folder) {
+        viewModelScope.launch {
+            useCase.getPlantsFromFolder(folder)
+                .collect {
+                    when (it) {
+                        is Resource.Internet -> _loadingStates.value = LoadingStates.Error
+
+                        is Resource.Success -> {
+                            _plants.value = it.data ?: listOf()
+                            _loadingStates.value = LoadingStates.Success
+                        }
+
+                        is Resource.Loading -> _loadingStates.value = LoadingStates.Loading
+
+                        else -> _loadingStates.value = LoadingStates.Error
+                    }
+                }
+        }
+    }
+
+    fun delPlantsFromFolder(folder: Folder, plant: Plant){
         viewModelScope.launch {
             useCase.delPlantFromFolder(folder, plant)
                 .collect {
@@ -113,6 +134,9 @@ class FoldersViewModel(
                     }
                 }
         }
+    }
+
+    init {
         getFolders()
     }
 }

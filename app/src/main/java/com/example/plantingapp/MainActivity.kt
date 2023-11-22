@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         btViewModel.bluetoothAdapter = bluetoothAdapter
         btViewModel.pm = pm
         setContent {
-            PlantingAppTheme(darkTheme = false) {
+            //PlantingAppTheme(darkTheme = false) {
                 val systemUiController = rememberSystemUiController()
                 SideEffect {
                     systemUiController.setStatusBarColor(
@@ -49,6 +49,6 @@ class MainActivity : ComponentActivity() {
                 }
                 Navigator(SplashScreen(getViewModel()))
             }
-        }
+        //}
     }
 }

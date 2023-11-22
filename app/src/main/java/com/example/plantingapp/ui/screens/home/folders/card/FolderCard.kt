@@ -1,6 +1,5 @@
 package com.example.plantingapp.ui.screens.home.folders.card
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,19 +13,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,7 +31,6 @@ import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.home.folders.details.FolderDetailsScreen
 import com.example.plantingapp.ui.theme.GreenBackground
-import com.example.plantingapp.ui.theme.GreenPrimary
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -46,7 +41,7 @@ fun FolderCard(folder: Folder) {
     Card(
         modifier = Modifier
             .padding(10.dp)
-            .height(100.dp)
+            .height(80.dp)
             .width(160.dp)
             .clickable {
                 navigator?.push(
@@ -60,10 +55,10 @@ fun FolderCard(folder: Folder) {
         colors = CardDefaults.cardColors(
             containerColor = GreenBackground
         ),
-        border = BorderStroke(
+        /*border = BorderStroke(
             1.dp,
             GreenPrimary
-        )
+        )*/
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -73,22 +68,8 @@ fun FolderCard(folder: Folder) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
                     IconButton(
-                        onClick = {
-                            foldersViewModel.getFolders()
-                        },
-                        content = {
-                            Icon(
-                                painter = rememberVectorPainter(Icons.Default.Refresh),
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.size(20.dp)
-                            )
-
-                        }
-                    )
-                    IconButton(
+                        modifier = Modifier.align(Alignment.Bottom),
                         onClick = {
                             foldersViewModel.delFolder(folder)
                         },
@@ -101,7 +82,7 @@ fun FolderCard(folder: Folder) {
                             )
                         }
                     )
-                }
+
 
                 Column(
                     modifier = Modifier

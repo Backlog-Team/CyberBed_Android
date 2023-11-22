@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,9 +41,35 @@ fun LoginView(
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
     var showErrMsg by remember { mutableStateOf(false) }
-    val errMgs = viewModel.message.collectAsState()
+    var loading by remember { mutableStateOf(false) }
 
-    Column(
+    val errMgs = viewModel.message.collectAsState()
+    val loadingState = viewModel.loadingState.collectAsState()
+
+    when (loadingState.value) {
+        LoadingStates.Success -> {
+            navigator.replace(BaseScreen())
+            showErrMsg = false
+            loading = false
+        }
+
+        LoadingStates.Loading -> {
+            showErrMsg = false
+            loading = true
+        }
+
+        LoadingStates.Error -> {
+            showErrMsg = true
+            loading = false
+        }
+
+        else -> {
+            showErrMsg = false
+            loading = false
+        }
+    }
+
+        Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 40.dp, vertical = 120.dp),
@@ -68,22 +95,18 @@ fun LoginView(
             visibility = passwordVisibility,
             onVisibilityChange = { passwordVisibility = !passwordVisibility })
         if (showErrMsg) {
-
             Text(
                 text = errMgs.value,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.Red
             )
         }
+        if (loading) {
+            CircularProgressIndicator()
+        }
         Button(
             onClick = {
                 viewModel.login(username, password)
-                showErrMsg = if (viewModel.loadingState.value == LoadingStates.Success) {
-                    navigator.replace(BaseScreen())
-                    false
-                } else
-                    true
-
             },
             modifier = Modifier.fillMaxWidth()
         ) {

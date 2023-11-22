@@ -97,8 +97,12 @@ class FoldersUseCase(
             val process = repository.getPlantsFromFolder(folder.id ?: 0)
 
             if (process.isSuccessful) {
+                Log.d("kilo", process.raw().toString())
+
                 emit(Resource.Success(process.body()))
             } else {
+                Log.d("kilo", process.raw().toString())
+
                 val errMsg = process.errorBody()?.string()
                 emit(Resource.Error.GeneralError(errMsg!!))
             }

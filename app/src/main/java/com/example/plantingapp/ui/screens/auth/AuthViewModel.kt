@@ -27,7 +27,7 @@ class AuthViewModel(
     private val _userId = MutableStateFlow(UserCreated())
     val userId: StateFlow<UserCreated> = _userId
 
-    private val _authState = MutableStateFlow(LoadingStates.Loading)
+    private val _authState = MutableStateFlow(LoadingStates.NotLoading)
     val authState = _authState.asStateFlow()
 
     fun login(username: String, password: String) {

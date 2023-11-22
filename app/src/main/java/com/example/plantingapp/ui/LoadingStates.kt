@@ -4,5 +4,5 @@ enum class LoadingStates {
     Success,
     Error,
     Loading,
-    NotLoading
+    NotLoading,
 }
