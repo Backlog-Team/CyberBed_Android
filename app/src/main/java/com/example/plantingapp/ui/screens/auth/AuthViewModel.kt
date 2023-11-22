@@ -18,7 +18,7 @@ class AuthViewModel(
     repository: PlantRepositoryInterface
 ): ViewModel() {
     private val useCase = AuthUseCase(repository)
-    private val _loadingStates = MutableStateFlow(LoadingStates.Loading)
+    private val _loadingStates = MutableStateFlow(LoadingStates.NotLoading)
     val loadingState = _loadingStates.asStateFlow()
 
     private val _message = MutableStateFlow("")
@@ -107,6 +107,28 @@ class AuthViewModel(
                         else -> {
                             Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
                             _authState.value = LoadingStates.Error
+                        }
+                    }
+                }
+        }
+    }
+    fun logout() {
+        viewModelScope.launch {
+            useCase.logout()
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            _authState.value = LoadingStates.Error
+                            _loadingStates.value = LoadingStates.Success
+                        }
+
+                        is Resource.Loading -> {
+                            _loadingStates.value = LoadingStates.Loading
+                        }
+
+                        else -> {
+                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            _loadingStates.value = LoadingStates.Error
                         }
                     }
                 }

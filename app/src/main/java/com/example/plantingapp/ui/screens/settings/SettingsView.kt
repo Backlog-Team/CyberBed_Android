@@ -15,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.ui.components.SettingsItem
+import com.example.plantingapp.ui.screens.settings.account.AccountScreen
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothScreen
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SettingsView() {
@@ -23,10 +25,6 @@ fun SettingsView() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                vertical = 30.dp,
-                horizontal = 20.dp
-            )
     ) {
         Row(
             modifier = Modifier
@@ -46,7 +44,7 @@ fun SettingsView() {
         }
         if (navigator != null) {
             SettingsItem(navigator = navigator, screen = BluetoothScreen(), text = "Bluetooth")
-            //SettingsItem(navigator = navigator, screen = BluetoothScreen(), text = "Profile")
+            SettingsItem(navigator = navigator, screen = AccountScreen(getViewModel()), text = "Profile")
         }
     }
 }
