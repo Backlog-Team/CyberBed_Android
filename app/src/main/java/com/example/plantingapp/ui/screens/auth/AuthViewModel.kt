@@ -119,7 +119,7 @@ class AuthViewModel(
                     when (it) {
                         is Resource.Success -> {
                             _authState.value = LoadingStates.Error
-                            _loadingStates.value = LoadingStates.Success
+                            _loadingStates.value = LoadingStates.NotLoading
                         }
 
                         is Resource.Loading -> {
