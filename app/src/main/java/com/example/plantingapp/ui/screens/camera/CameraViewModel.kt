@@ -31,11 +31,9 @@ class CameraViewModel(
     private val _loadingStates = MutableStateFlow(LoadingStates.Loading)
     val loadingState = _loadingStates.asStateFlow()
 
-    fun recognizePhoto(image: ImageProxy) {
-        val img: Bitmap = image.toBitmap()
-
+    fun recognizePhoto(image: Bitmap) {
         viewModelScope.launch {
-            useCase.recognizeImage(img)
+            useCase.recognizeImage(image)
                 .collect {
                     when (it) {
                         is Resource.Internet -> _loadingStates.value = LoadingStates.Error
@@ -66,7 +64,8 @@ class CameraViewModel(
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)
                 _plants.value = emptyList()
-                recognizePhoto(image)
+                val img: Bitmap = image.toBitmap()
+                recognizePhoto(img)
                 cameraExecutor.shutdown()
             }
         })
