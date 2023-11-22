@@ -15,7 +15,7 @@ class SavedUseCase(
         try {
             emit(Resource.Loading())
 
-            val process = repository.savePlant(plant.id)
+            val process = repository.addPlant(plant.id)
 
             if (process.isSuccessful) {
                 emit(Resource.Success())
@@ -34,7 +34,7 @@ class SavedUseCase(
         try {
             emit(Resource.Loading())
 
-            val process = repository.delSavedPlant(plant.id)
+            val process = repository.deletePlant(plant.id)
 
             if (process.isSuccessful) {
                 emit(Resource.Success())
@@ -53,7 +53,7 @@ class SavedUseCase(
         try {
             emit(Resource.Loading())
 
-            val process = repository.getSavedPlants()
+            val process = repository.getPlants()
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
