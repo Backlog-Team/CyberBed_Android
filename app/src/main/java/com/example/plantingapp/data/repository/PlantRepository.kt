@@ -10,7 +10,7 @@ import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.models.User
-import com.example.plantingapp.domain.models.UserCreated
+import com.example.plantingapp.domain.models.UserId
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -24,15 +24,15 @@ import kotlin.random.nextUInt
 class PlantRepository(
     private val plantApi: PlantApi
 ) : PlantRepositoryInterface {
-    override suspend fun auth(): Response<UserCreated> {
+    override suspend fun auth(): Response<UserId> {
         return plantApi.auth()
     }
 
-    override suspend fun signup(user: User): Response<UserCreated> {
+    override suspend fun signup(user: User): Response<UserId> {
         return plantApi.signup(user)
     }
 
-    override suspend fun login(user: User): Response<UserCreated> {
+    override suspend fun login(user: User): Response<UserId> {
         return plantApi.login(user)
     }
 
@@ -103,12 +103,12 @@ class PlantRepository(
 
     //Custom
     override suspend fun createCustomPlant(
-        plantName: String,
-        about: String,
-        image: Bitmap,
+        plantName: String?,
+        about: String?,
+        image: Bitmap?,
     ): Response<CustomPlant> {
         val stream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        image?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
         val imagePart = MultipartBody.Part.createFormData(
             "images",
@@ -116,8 +116,8 @@ class PlantRepository(
             byteArray.toRequestBody("image/*".toMediaTypeOrNull(), 0, byteArray.size)
         )
 
-        val plantPart = MultipartBody.Part.createFormData("plantName", plantName)
-        val descPart = MultipartBody.Part.createFormData("about", about)
+        val plantPart = plantName?.let { MultipartBody.Part.createFormData("plantName", it) }
+        val descPart = about?.let { MultipartBody.Part.createFormData("about", it) }
 
         return plantApi.createCustomPlant(plantPart, descPart, imagePart)
     }
@@ -153,7 +153,7 @@ class PlantRepository(
     }
 
     //Folders
-    override suspend fun createFolder(folderName: String): Response<UserCreated> {
+    override suspend fun createFolder(folderName: String): Response<UserId> {
         return plantApi.createFolder(folderName)
     }
 

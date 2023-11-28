@@ -6,17 +6,17 @@ import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.models.User
-import com.example.plantingapp.domain.models.UserCreated
+import com.example.plantingapp.domain.models.UserId
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import retrofit2.Response
 
 interface PlantRepositoryInterface {
-    suspend fun auth(): Response<UserCreated>
+    suspend fun auth(): Response<UserId>
 
-    suspend fun signup(user: User): Response<UserCreated>
+    suspend fun signup(user: User): Response<UserId>
 
-    suspend fun login(user: User): Response<UserCreated>
+    suspend fun login(user: User): Response<UserId>
 
     suspend fun logout(): Response<Unit>
 
@@ -46,9 +46,9 @@ interface PlantRepositoryInterface {
 
     //Custom
     suspend fun createCustomPlant(
-        plantName: String,
-        about: String,
-        image: Bitmap,
+        plantName: String?,
+        about: String?,
+        image: Bitmap?,
     ): Response<CustomPlant>
 
 
@@ -66,7 +66,7 @@ interface PlantRepositoryInterface {
     //Folders
     suspend fun createFolder(
         folderName: String
-    ): Response<UserCreated>
+    ): Response<UserId>
 
 
     suspend fun getFolders(): Response<List<Folder>>

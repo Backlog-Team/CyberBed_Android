@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.components
+package com.example.plantingapp.ui.navigation
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size

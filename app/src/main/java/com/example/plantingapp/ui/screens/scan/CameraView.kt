@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.camera
+package com.example.plantingapp.ui.screens.scan
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -12,6 +12,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,23 +32,30 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import com.example.plantingapp.R
+import com.example.plantingapp.ui.components.containers.NestedView
+import com.example.plantingapp.ui.screens.home.HomeTab
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun CameraView(
-    viewModel: CameraViewModel
+    viewModel: ScanViewModel
 ) {
     val navigator = LocalNavigator.currentOrThrow
+    val tabNavigator = LocalTabNavigator.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -58,7 +66,7 @@ fun CameraView(
         .requireLensFacing(viewModel.lensFacing)
         .build()
 
-    var chosenPic: Bitmap? = null
+    var chosenPic: Bitmap?
 
     val pickMedia = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -93,88 +101,77 @@ fun CameraView(
             preview,
             imageCapture
         )
-
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
-
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier.fillMaxSize()
+    NestedView(
+        isDarkBackground = true,
+        onClose = { tabNavigator.current = HomeTab }
     ) {
-        AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    bottom = 50.dp,
-                    start = 20.dp,
-                    end = 20.dp
-                ),
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            IconButton(
-                onClick = {
-                    Log.i("kilo", "ON CLICK")
-                    viewModel.takePhoto(imageCapture = imageCapture)
-                    navigator.push(PlantRecognizedScreen(viewModel))
-                },
-                content = {
-                    Icon(
-                        imageVector = Icons.Sharp.Lens,
-                        contentDescription = "Take picture",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .border(1.dp, Color.White, CircleShape)
-                    )
-                }
-            )
-
-            /*IconButton(
-                //TODO(onClick)
-                onClick = {
-                    Log.i("kilo", "Rotate clicked")
-                    viewModel.lensFacing =
-                        if (viewModel.lensFacing == CameraSelector.LENS_FACING_FRONT)
-                        CameraSelector.LENS_FACING_BACK else CameraSelector.LENS_FACING_FRONT
-                    cameraSelector = CameraSelector.Builder()
-                        .requireLensFacing(viewModel.lensFacing)
-                        .build()
-                },
-                content = {
-                    Icon(
-                        contentDescription = "Rotate",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(70.dp)
-                            .clip(CircleShape)
-                            .background(Color.Gray.copy(alpha = 0.4f))
-                            .padding(10.dp),
-                        painter = painterResource(id = R.drawable.ic_rotate),
-                    )
-                }
-            )*/
-
-        }
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(bottom = 50.dp),
-            onClick = {
-                pickMedia.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        Box(contentAlignment = Alignment.BottomCenter) {
+            AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        bottom = 20.dp,
+                        start = 20.dp,
+                        end = 20.dp
+                    ),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                IconButton(
+                    onClick = {
+                        pickMedia.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
+                    content = {
+                        Icon(
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(70.dp),
+                            painter = rememberVectorPainter(image = Icons.Default.Image)
+                        )
+                    }
                 )
-            },
-            content = {
-                Icon(
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(70.dp),
-                    painter = rememberVectorPainter(image = Icons.Default.Image)
+                IconButton(
+                    onClick = {
+                        Log.i("kilo", "ON CLICK")
+                        viewModel.takePhoto(imageCapture = imageCapture)
+                        navigator.push(PlantRecognizedScreen(viewModel))
+                    },
+                    content = {
+                        Icon(
+                            imageVector = Icons.Sharp.Lens,
+                            contentDescription = "Take picture",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(100.dp)
+                                .border(1.dp, Color.White, CircleShape)
+                        )
+                    }
+                )
+
+                IconButton(
+                    onClick = {
+                        Log.i("kilo", "Rotate clicked")
+                        viewModel.changeFacing()
+                    },
+                    content = {
+                        Icon(
+                            contentDescription = "Rotate",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(70.dp)
+                                .clip(CircleShape)
+                                .background(Color.Gray.copy(alpha = 0.4f))
+                                .padding(10.dp),
+                            painter = painterResource(id = R.drawable.ic_rotate),
+                        )
+                    }
                 )
             }
-        )
+        }
     }
 }

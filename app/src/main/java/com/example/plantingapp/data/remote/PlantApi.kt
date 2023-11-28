@@ -4,7 +4,7 @@ import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.models.User
-import com.example.plantingapp.domain.models.UserCreated
+import com.example.plantingapp.domain.models.UserId
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -23,20 +23,20 @@ import retrofit2.http.Query
 interface PlantApi {
     // Authorization
     @GET("/api/auth")
-    suspend fun auth(): Response<UserCreated>
+    suspend fun auth(): Response<UserId>
 
     @Headers("Access-Control-Allow-Credentials: true")
     @POST("/api/signup")
     suspend fun signup(
         @Body user: User
-    ): Response<UserCreated>
+    ): Response<UserId>
 
 
     @Headers("Access-Control-Allow-Credentials: true")
     @POST("/api/login")
     suspend fun login(
         @Body user: User
-    ): Response<UserCreated>
+    ): Response<UserId>
 
     @DELETE("/api/logout")
     suspend fun logout(): Response<Unit>
@@ -106,9 +106,9 @@ interface PlantApi {
     @Multipart
     @POST("api/custom/plants")
     suspend fun createCustomPlant(
-        @Part plantName: MultipartBody.Part,
-        @Part about: MultipartBody.Part,
-        @Part image: MultipartBody.Part,
+        @Part plantName: MultipartBody.Part?,
+        @Part about: MultipartBody.Part?,
+        @Part image: MultipartBody.Part?,
     ): Response<CustomPlant>
 
     @GET("api/custom/plants")
@@ -133,7 +133,7 @@ interface PlantApi {
     @POST("api/folders")
     suspend fun createFolder(
         @Query("name") folderName: String
-    ): Response<UserCreated>
+    ): Response<UserId>
 
     @GET("api/folders")
     suspend fun getFolders(): Response<List<Folder>>

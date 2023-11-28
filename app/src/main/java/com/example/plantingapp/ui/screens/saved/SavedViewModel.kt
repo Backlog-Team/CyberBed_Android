@@ -6,7 +6,7 @@ import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.domain.usecases.SavedUseCase
-import com.example.plantingapp.ui.LoadingStates
+import com.example.plantingapp.ui.states.LoadingStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

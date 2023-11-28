@@ -1,68 +1,90 @@
 package com.example.plantingapp.ui.screens.shared.details
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.plantingapp.domain.models.Plant
-import com.example.plantingapp.ui.screens.explore.ExploreViewModel
+import com.example.plantingapp.ui.components.FoldersMenu
+import com.example.plantingapp.ui.components.PlantImage
+import com.example.plantingapp.ui.components.containers.NestedView
 
 @Composable
 fun PlantDetailsView(
-    plant: Plant,
-    viewModel: ExploreViewModel,
-    imageRequest: ImageRequest
+    plant: Plant
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start
-    ) {
+    val navigator = LocalNavigator.currentOrThrow
+    NestedView(onClose = { navigator.pop() }) {
 
-        Row(
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween
+        PlantImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(210.dp),
+            imageUrl = "https://zenehu.space/api/search/plants/${plant.id}/image"
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 200.dp)
+                .clip(RoundedCornerShape(0.2f))
+                .background(Color.White),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
         ) {
-            Column {
-                Text(
-                    text = plant.displayPid ?: "Название не указано",
-                    modifier = Modifier.width(180.dp)
-                )
-                Button(
-                    onClick = {TODO()},
-                    modifier = Modifier.width(180.dp),
-                ) {
-                    Text("Добавить")
-                }
-            }
-            AsyncImage(
-                model = imageRequest,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(5.dp)),
-                contentScale = ContentScale.Crop,
+            Text(
+                text = plant.displayPid ?: "Название не указано",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)
             )
+            Text(
+                text = "Описание",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(horizontal = 10.dp)
+
+            )
+            Text(
+                text = plant.basic?.floralLanguage ?: "Описание не указано",
+                fontSize = 16.sp,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+
+            val showDialog = remember { mutableStateOf(false) }
+            Button(
+                onClick = { showDialog.value = !showDialog.value },
+                modifier = Modifier.width(180.dp).padding(horizontal = 10.dp),
+            ) {
+                Text("Добавить")
+            }
+            if (showDialog.value) {
+                FoldersMenu(
+                    plant = plant,
+                    setShowDialog = {
+                        showDialog.value = it
+                    }
+                )
+            }
         }
-        Text(plant.species?.blooming ?: "Описание цветов не указано")
-        Text(plant.maintenance?.watering ?: "Режим полива не указан")
-
-
     }
 }

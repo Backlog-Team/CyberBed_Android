@@ -29,7 +29,7 @@ fun AddFolderDialog(
     Dialog(
         onDismissRequest = { setShowDialog(false) }
     ) {
-        Card() {
+        Card {
             Column(Modifier.padding(5.dp)) {
                 Text(
                     text = "Введите название:",

@@ -1,6 +1,9 @@
 package com.example.plantingapp.ui.screens.explore
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +47,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.PlantCard
+import com.example.plantingapp.ui.components.containers.TabView
+import com.example.plantingapp.ui.screens.explore.custom.plants.CustomScreen
+import com.example.plantingapp.ui.screens.explore.custom.plants.CustomViewModel
 import com.example.plantingapp.ui.screens.explore.search.SearchField
 import com.example.plantingapp.ui.screens.explore.search.SearchViewModel
 import kotlinx.coroutines.launch
@@ -56,139 +63,152 @@ fun ExploreView(
     val navigator = LocalNavigator.current
     val lazyListState = rememberLazyListState()
     val plants = viewModel.pagingData.value.collectAsLazyPagingItems()
-    val searchViewModel = getViewModel<SearchViewModel>()
+    val searchViewModel: SearchViewModel = getViewModel()
+    val customViewModel: CustomViewModel = getViewModel()
 
     val refreshing = viewModel.refreshing.value
     val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.refresh(plants) })
-
     val scope = rememberCoroutineScope()
-    
+
     var showSearch by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Explore",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-            )
-            Row(
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = {
-                        showSearch = !showSearch
-                    },
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_search),
-                            contentDescription = "Search",
-                            tint = Color.Black,
-                            modifier = Modifier
-                                .size(20.dp)
-                        )
-                    }
-                )
-                IconButton(
-                    onClick = {
-                        Log.i("kilo", "Add clicked")
-                    },
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_add),
-                            contentDescription = "Add",
-                            tint = Color.Black,
-                            modifier = Modifier
-                                .size(20.dp)
-                        )
-                    }
-                )
-            }
+    val firstItemVisible by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex == 0
         }
-        Box(modifier = Modifier.fillMaxWidth()) {
-            if (showSearch) SearchField(viewModel = searchViewModel)
-            Box(Modifier.pullRefresh(pullRefreshState)) {
-                LazyColumn(
+    }
+    TabView {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Explore",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .fillMaxSize(),
-                    state = lazyListState,
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .align(Alignment.CenterVertically)
+                )
+                Row(
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    plants.let {
-                        if (it.loadState.refresh is LoadState.NotLoading) {
-                            items(plants.itemCount) { index ->
-                                if (plants[index] != null)
-                                    PlantCard(plants[index]!!)
-                            }
-                            if (it.loadState.append is LoadState.Loading) {
-                                item {
-                                    CircularProgressIndicator()
+                    IconButton(
+                        onClick = {
+                            showSearch = !showSearch
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = "Search",
+                                tint = Color.Black,
+                                modifier = Modifier
+                                    .size(20.dp)
+                            )
+                        }
+                    )
+                    IconButton(
+                        onClick = {
+                            Log.i("kilo", "Add clicked")
+                            navigator?.push(CustomScreen(customViewModel))
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_add),
+                                contentDescription = "Add",
+                                tint = Color.Black,
+                                modifier = Modifier
+                                    .size(20.dp)
+                            )
+                        }
+                    )
+                }
+            }
+            Box(modifier = Modifier.fillMaxWidth()) {
+                if (showSearch) SearchField(viewModel = searchViewModel)
+                Box(Modifier.pullRefresh(pullRefreshState)) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        state = lazyListState,
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        plants.let {
+                            if (it.loadState.refresh is LoadState.NotLoading) {
+                                items(plants.itemCount) { index ->
+                                    if (plants[index] != null)
+                                        PlantCard(plants[index]!!)
                                 }
-                            }
-                            if (it.loadState.append is LoadState.Error) {
+                                if (it.loadState.append is LoadState.Loading) {
+                                    item {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                                if (it.loadState.append is LoadState.Error) {
+                                    item {
+                                        Text("LoadingError")
+                                        Button(onClick = { it.retry() }) {
+                                            Text("Retry")
+                                        }
+                                    }
+                                }
+                            } else if (it.loadState.refresh is LoadState.Loading) {
                                 item {
-                                    Text("LoadingError")
-                                    Button(onClick = { it.retry() }) {
-                                        Text("Retry")
+                                    Box(modifier = Modifier.fillParentMaxSize()) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
+                                    }
+                                }
+                            } else if (it.loadState.refresh is LoadState.Error) {
+                                item {
+                                    Box(modifier = Modifier.fillParentMaxSize()) {
+                                        Text(
+                                            "Error",
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
                                     }
                                 }
                             }
-                        } else if (it.loadState.refresh is LoadState.Loading) {
-                            item {
-                                Box(modifier = Modifier.fillParentMaxSize()) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.align(Alignment.Center)
+                        }
+                    }
+                    PullRefreshIndicator(
+                        refreshing,
+                        pullRefreshState,
+                        Modifier.align(Alignment.TopCenter)
+                    )
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                    ) {
+                        AnimatedVisibility(
+                            visible = !firstItemVisible,
+                            enter = slideInVertically(initialOffsetY = { it / 2 }),
+                            exit = slideOutVertically(targetOffsetY = { it / 2 })
+                        ) {
+                            IconButton(
+                                modifier = Modifier.clip(CircleShape),
+                                onClick = {
+                                    scope.launch {
+                                        lazyListState.animateScrollToItem(index = 0)
+                                    }
+                                },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = Color.LightGray.copy(alpha = 0.7f)
+                                ),
+                                content = {
+                                    Icon(
+                                        painter = rememberVectorPainter(image = Icons.Default.ArrowUpward),
+                                        contentDescription = null,
+                                        tint = Color.Black,
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
-                            }
-                        } else if (it.loadState.refresh is LoadState.Error) {
-                            item {
-                                Box(modifier = Modifier.fillParentMaxSize()) {
-                                    Text(
-                                        "Error",
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
-                                }
-                            }
+                            )
                         }
                     }
                 }
-                PullRefreshIndicator(
-                    refreshing,
-                    pullRefreshState,
-                    Modifier.align(Alignment.TopCenter)
-                )
-                IconButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .clip(CircleShape),
-                    onClick = {
-                        scope.launch {
-                            lazyListState.animateScrollToItem(index = 0)
-                        }
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.LightGray
-                    ),
-                    content = {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Default.ArrowUpward),
-                            contentDescription = null,
-                            tint = Color.Black,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                )
             }
         }
     }

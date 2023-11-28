@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui
+package com.example.plantingapp.ui.states
 
 enum class LoadingStates {
     Success,

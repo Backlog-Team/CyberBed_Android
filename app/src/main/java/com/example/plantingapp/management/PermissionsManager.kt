@@ -3,7 +3,6 @@ package com.example.plantingapp.management
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,7 +16,7 @@ class PermissionsManager(
                 activity,
                 android.Manifest.permission.BLUETOOTH_CONNECT
             ) == PackageManager.PERMISSION_GRANTED
-        } else false
+        } else true
     }
 
     fun checkCameraPermission(): Boolean {
@@ -26,8 +25,18 @@ class PermissionsManager(
                 activity,
                 android.Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
-        } else false
+        } else true
     }
+
+    fun checkNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                activity,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else true
+    }
+
     fun requestBtPermission() {
         when {
             checkBtPermission() -> {
@@ -59,11 +68,6 @@ class PermissionsManager(
                         ),
                         requestCode
                     )
-                    Toast.makeText(
-                        activity,
-                        "Permission BLUETOOTH_CONNECT requires API level 31",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }
         }

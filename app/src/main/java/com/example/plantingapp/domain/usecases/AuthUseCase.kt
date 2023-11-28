@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.domain.models.User
-import com.example.plantingapp.domain.models.UserCreated
+import com.example.plantingapp.domain.models.UserId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -12,7 +12,7 @@ import java.io.IOException
 class AuthUseCase(
     private val repository: PlantRepositoryInterface
 ) {
-    fun auth(): Flow<Resource<UserCreated>> = flow {
+    fun auth(): Flow<Resource<UserId>> = flow {
         try {
             emit(Resource.Loading())
 
@@ -31,7 +31,7 @@ class AuthUseCase(
         }
     }
 
-    fun login(user: User): Flow<Resource<UserCreated>> = flow {
+    fun login(user: User): Flow<Resource<UserId>> = flow {
         try {
             emit(Resource.Loading())
 
@@ -48,7 +48,7 @@ class AuthUseCase(
         }
     }
 
-    fun signup(user: User): Flow<Resource<UserCreated>> = flow {
+    fun signup(user: User): Flow<Resource<UserId>> = flow {
         try {
             emit(Resource.Loading())
 

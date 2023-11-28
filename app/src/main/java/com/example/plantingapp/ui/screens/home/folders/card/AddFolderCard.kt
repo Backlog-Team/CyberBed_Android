@@ -34,10 +34,6 @@ fun AddFolderCard() {
         colors = CardDefaults.cardColors(
             containerColor = GreenBackground
         ),
-        /*border = BorderStroke(
-            1.dp,
-            GreenPrimary
-        )*/
         onClick = { showDialog.value = !showDialog.value }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

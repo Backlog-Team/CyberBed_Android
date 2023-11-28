@@ -4,13 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.models.User
-import com.example.plantingapp.domain.models.UserCreated
-import com.example.plantingapp.domain.usecases.AuthUseCase
 import com.example.plantingapp.domain.Resource
-import com.example.plantingapp.ui.LoadingStates
+import com.example.plantingapp.domain.models.User
+import com.example.plantingapp.domain.models.UserId
+import com.example.plantingapp.domain.usecases.AuthUseCase
+import com.example.plantingapp.ui.states.LoadingStates
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -24,10 +23,9 @@ class AuthViewModel(
     private val _message = MutableStateFlow("")
     val message = _message.asStateFlow()
 
-    private val _userId = MutableStateFlow(UserCreated())
-    val userId: StateFlow<UserCreated> = _userId
+    private val _userId = MutableStateFlow(UserId())
 
-    private val _authState = MutableStateFlow(LoadingStates.NotLoading)
+    private val _authState = MutableStateFlow(AuthStates.LoggedOut)
     val authState = _authState.asStateFlow()
 
     fun login(username: String, password: String) {
@@ -42,11 +40,12 @@ class AuthViewModel(
 
                         is Resource.Loading -> {
                             _loadingStates.value = LoadingStates.Loading
+                            _authState.value = AuthStates.Logging
                         }
 
                         is Resource.Success -> {
-                            _userId.value = it.data ?: UserCreated()
-                            _loadingStates.value = LoadingStates.Success
+                            _userId.value = it.data ?: UserId()
+                            _authState.value = AuthStates.LoggedIn
                         }
 
                         else -> {
@@ -71,13 +70,16 @@ class AuthViewModel(
 
                         is Resource.Loading -> {
                             Log.d("kilo", "Loading...")
-                            LoadingStates.Loading
+                            _loadingStates.value = LoadingStates.Loading
+                            _authState.value = AuthStates.Logging
+
                         }
 
                         is Resource.Success -> {
                             Log.d("kilo", "Success: $it")
-                            _userId.value = it.data ?: UserCreated()
+                            _userId.value = it.data ?: UserId()
                             _loadingStates.value = LoadingStates.Success
+                            _authState.value = AuthStates.LoggedIn
                         }
 
                         else -> {
@@ -95,18 +97,18 @@ class AuthViewModel(
                 .collect {
                     when (it) {
                         is Resource.Success -> {
-                            _userId.value = it.data ?: UserCreated()
-                            _authState.value = LoadingStates.Success
+                            _userId.value = it.data ?: UserId()
+                            _authState.value = AuthStates.LoggedIn
                         }
 
                         is Resource.Loading -> {
-                            _userId.value = it.data ?: UserCreated()
-                            _authState.value = LoadingStates.Loading
+                            _userId.value = it.data ?: UserId()
+                            _authState.value = AuthStates.Logging
                         }
 
                         else -> {
                             Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
-                            _authState.value = LoadingStates.Error
+                            _authState.value = AuthStates.LoggedOut
                         }
                     }
                 }
@@ -118,7 +120,7 @@ class AuthViewModel(
                 .collect {
                     when (it) {
                         is Resource.Success -> {
-                            _authState.value = LoadingStates.Error
+                            _authState.value = AuthStates.LoggedOut
                             _loadingStates.value = LoadingStates.NotLoading
                         }
 

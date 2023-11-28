@@ -19,6 +19,7 @@ class BluetoothViewModel: ViewModel() {
     var pm: PermissionsManager? = null
 
     val isConnected = mutableStateOf(false)
+    var pairedDevices: Set<BluetoothDevice>? = setOf()
     private var deviceHC05: BluetoothDevice? = null
 
     fun sendMessageToHC(message: String) {
@@ -29,7 +30,7 @@ class BluetoothViewModel: ViewModel() {
             Log.d("kilo", "Socket.isConnected: ${socket?.isConnected ?: "doesn't exist"}")
             if (socket != null && deviceHC05 != null) {
                 try {
-                    var bluetoothSocket: BluetoothSocket? = deviceHC05!!.javaClass.getMethod(
+                    val bluetoothSocket: BluetoothSocket? = deviceHC05!!.javaClass.getMethod(
                         "createRfcommSocket", Int::class.javaPrimitiveType
                     ).invoke(deviceHC05, 1) as BluetoothSocket?
                     Log.d(
@@ -40,9 +41,9 @@ class BluetoothViewModel: ViewModel() {
                         bluetoothSocket.connect()
                         Log.d(
                             "kilo",
-                            "BTSocket.isConnected: ${bluetoothSocket.isConnected ?: "doesn't exist"}"
+                            "BTSocket.isConnected: ${bluetoothSocket.isConnected}"
                         )
-                        if (bluetoothSocket.isConnected == true) {
+                        if (bluetoothSocket.isConnected) {
                             Log.d("kilo", "Open output stream")
                             val outputStream = bluetoothSocket.outputStream
                             Log.d("kilo", "Writing data...")
@@ -63,10 +64,10 @@ class BluetoothViewModel: ViewModel() {
          Log.d("kilo", "bluetoothAdapter?.isEnabled: ${bluetoothAdapter?.isEnabled}")
          Log.d("kilo", "pm?.checkBtPermission() : ${pm?.checkBtPermission() }")
         if (bluetoothAdapter?.isEnabled == true && pm?.checkBtPermission() == true) {
-            val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+            pairedDevices = bluetoothAdapter?.bondedDevices
 
             if (pairedDevices != null) {
-                for (device in pairedDevices) {
+                for (device in pairedDevices!!) {
                     Log.d("kilo", device.name)
                     if (device.name == name) {
                         isConnected.value = true

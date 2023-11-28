@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.camera
+package com.example.plantingapp.ui.screens.scan
 
 import android.graphics.Bitmap
 import android.util.Log
@@ -12,7 +12,7 @@ import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.usecases.CameraUseCase
 import com.example.plantingapp.domain.Resource
-import com.example.plantingapp.ui.LoadingStates
+import com.example.plantingapp.ui.states.LoadingStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraViewModel(
+class ScanViewModel(
     repository: PlantRepositoryInterface,
 ): ViewModel() {
     var lensFacing = CameraSelector.LENS_FACING_BACK
@@ -69,5 +69,13 @@ class CameraViewModel(
                 cameraExecutor.shutdown()
             }
         })
+    }
+
+    fun changeFacing() {
+        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+            CameraSelector.LENS_FACING_FRONT
+        } else {
+            CameraSelector.LENS_FACING_BACK
+        }
     }
 }

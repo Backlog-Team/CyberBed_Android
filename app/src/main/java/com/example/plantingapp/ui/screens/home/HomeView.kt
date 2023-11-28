@@ -28,9 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.plantingapp.ui.LoadingStates
+import com.example.plantingapp.ui.states.LoadingStates
 import com.example.plantingapp.ui.components.GroupHeader
 import com.example.plantingapp.ui.components.ScanButton
+import com.example.plantingapp.ui.components.containers.TabView
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.home.folders.card.AddFolderCard
 import com.example.plantingapp.ui.screens.home.folders.card.FolderCard
@@ -43,85 +44,90 @@ fun HomeView() {
     val folders = foldersViewModel.folders.collectAsState()
     val loadingState = foldersViewModel.loadingState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Row(
+    TabView {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
         ) {
-            Text(
-                text = "My Plants",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+            Row(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
-            )
-        }
-        ScanButton()
+                    .fillMaxWidth()
+                    .height(50.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "My Plants",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                )
+            }
+            ScanButton()
 
-        Row(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Folders",
-                fontSize = 18.sp,
+            Row(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                fontWeight = FontWeight.Medium,
-            )
-            IconButton(
-                onClick = {
-                    foldersViewModel.getFolders()
-                },
-                content = {
-                    Icon(
-                        painter = rememberVectorPainter(Icons.Default.Refresh),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    .padding(top = 20.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Folders",
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    fontWeight = FontWeight.Medium,
+                )
+                IconButton(
+                    onClick = {
+                        foldersViewModel.getFolders()
+                    },
+                    content = {
+                        Icon(
+                            painter = rememberVectorPainter(Icons.Default.Refresh),
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(20.dp)
+                        )
 
+                    }
+                )
+            }
+            when (loadingState.value) {
+                LoadingStates.Success -> {
+                    LazyRow {
+                        items(folders.value.size) { index ->
+                            FolderCard(folders.value[index])
+                        }
+                        item {
+                            AddFolderCard()
+                        }
+                    }
                 }
-            )
+
+                LoadingStates.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Не удалось загрузить папки")
+                        Button(onClick = { foldersViewModel.getFolders() }) {
+                            Text("Попробовать еще раз")
+                        }
+                    }
+                }
+
+                LoadingStates.Loading -> {
+                    CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                }
+
+                LoadingStates.NotLoading -> {
+                    Text("Загрузка еще не началася")
+                }
+            }
+            Divider(color = Color.LightGray, thickness = 1.dp)
+            GroupHeader("Notifications") {}
+            Text("Coming soon...")
         }
-        when (loadingState.value) {
-            LoadingStates.Success -> {
-                LazyRow {
-                    items(folders.value.size) { index ->
-                        FolderCard(folders.value[index])
-                    }
-                    item {
-                        AddFolderCard()
-                    }
-                }
-            }
-            LoadingStates.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Не удалось загрузить папки")
-                    Button(onClick = { foldersViewModel.getFolders() }) {
-                        Text("Попробовать еще раз")
-                    }
-                }
-            }
-            LoadingStates.Loading -> {
-                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-            }
-            LoadingStates.NotLoading -> {
-                Text("Загрузка еще не началася")
-            }
-        }
-        Divider(color = Color.LightGray, thickness = 1.dp)
-        GroupHeader("Notifications") {}
-        Text("Coming soon...")
     }
 }

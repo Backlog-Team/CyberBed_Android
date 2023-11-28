@@ -7,14 +7,14 @@ import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.usecases.FoldersUseCase
-import com.example.plantingapp.ui.LoadingStates
+import com.example.plantingapp.ui.states.LoadingStates
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class FoldersViewModel(
-    private val repository: PlantRepositoryInterface
+    repository: PlantRepositoryInterface
 ): ViewModel() {
     private val useCase = FoldersUseCase(repository)
     private var _folders = MutableStateFlow(emptyList<Folder>())

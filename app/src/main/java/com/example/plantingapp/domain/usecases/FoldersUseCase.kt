@@ -5,7 +5,7 @@ import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
-import com.example.plantingapp.domain.models.UserCreated
+import com.example.plantingapp.domain.models.UserId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -13,7 +13,7 @@ import java.io.IOException
 class FoldersUseCase(
     private val repository: PlantRepositoryInterface
 ) {
-    fun createFolder(name: String): Flow<Resource<UserCreated>> = flow {
+    fun createFolder(name: String): Flow<Resource<UserId>> = flow {
         try {
             emit(Resource.Loading())
 

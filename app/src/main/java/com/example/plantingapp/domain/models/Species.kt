@@ -2,7 +2,7 @@ package com.example.plantingapp.domain.models
 
 import com.google.gson.annotations.SerializedName
 
-data class Species(
+data class Basic(
     @SerializedName("ID") val id: Int = 0,
     @SerializedName("CreatedAt") val createdAt: String? = null,
     @SerializedName("UpdatedAt") val updatedAt: String? = null,
@@ -14,5 +14,4 @@ data class Species(
     @SerializedName("category") val category: String? = null,
     @SerializedName("blooming") val blooming: String? = null,
     @SerializedName("color") val color: String? = null,
-    @SerializedName("basic") val species: Species? = null
 )

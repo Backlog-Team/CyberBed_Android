@@ -34,7 +34,7 @@ fun FoldersMenu(
     Dialog(
         onDismissRequest = { setShowDialog(false) }
     ) {
-        Card() {
+        Card {
             Column(Modifier.padding(5.dp)) {
                 Text(
                     text = "Выберите папку:",
@@ -56,6 +56,13 @@ fun FoldersMenu(
                         }
                     }
                 }
+                Spacer(Modifier.height(20.dp))
+
+                Text(
+                    text = "Интервал полива:",
+                    fontSize = 18.sp
+                )
+
             }
         }
     }

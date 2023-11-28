@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,85 +35,128 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.memory.MemoryCache
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
-import com.example.plantingapp.ui.screens.explore.ExploreViewModel
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.shared.details.PlantDetailsScreen
-import com.example.plantingapp.ui.theme.GreenBackground
+import com.example.plantingapp.ui.theme.BluePrimary
+import com.example.plantingapp.ui.theme.GrayBackground
+import com.example.plantingapp.ui.theme.GreenPrimary
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun PlantCard(
     plant: Plant,
+    isSaveable: Boolean = true,
     isSaved: MutableState<Boolean> = mutableStateOf(false),
     isInFolder: Boolean = false,
-    folder: Folder? = null) {
+    folder: Folder? = null
+) {
     val navigator = LocalNavigator.current
-    val exploreViewModel = getViewModel<ExploreViewModel>()
     val context = LocalContext.current
-    val imageUrl = "https://zenehu.space/api/search/plants/${plant.id}/image"
-    val imageLoader = ImageLoader.Builder(context)
-        .memoryCache {
-            MemoryCache.Builder(context)
-                .maxSizePercent(0.25)
-                .build()
-        }
-        .build()
-    val placeholderImage = R.drawable.img_placeholder
-    val imageRequest = ImageRequest.Builder(context)
-        .data(imageUrl)
-        .memoryCacheKey(imageUrl)
-        .diskCacheKey(imageUrl)
-        .placeholder(placeholderImage)
-        .error(placeholderImage)
-        .fallback(placeholderImage)
-        .memoryCachePolicy(CachePolicy.ENABLED)
-        .build()
-    imageLoader.enqueue(imageRequest)
+
     val savedViewModel: SavedViewModel = getViewModel()
     val folderViewModel: FoldersViewModel = getViewModel()
-
 
     val scope = rememberCoroutineScope()
     Card(
         modifier = Modifier
-            .padding(10.dp)
-            .height(100.dp)
+            .padding(5.dp)
             .width(300.dp)
-            .clickable {
-                navigator?.push(PlantDetailsScreen(plant, exploreViewModel, imageRequest))
-            },
+            .height(200.dp)
+            .clickable { navigator?.push(PlantDetailsScreen(plant)) },
         shape = RoundedCornerShape(5.dp),
-        colors =  CardDefaults.cardColors(
-            containerColor = GreenBackground
+        colors = CardDefaults.cardColors(
+            containerColor = GrayBackground
         ),
-        //border = BorderStroke(1.dp, GreenPrimary)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Column(
+                    modifier = Modifier
+                        .weight(7f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = plant.displayPid ?: "-",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_ruler),
+                            tint = Color.Unspecified,
+                            contentDescription = null,
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Column {
+                            Text(
+                                text = "Высота",
+                                color = GreenPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = plant.maintenance?.size ?: "-",
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_waterdrop),
+                            tint = Color.Unspecified,
+                            contentDescription = null,
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Column {
+                            Text(
+                                text = "Влажность почвы",
+                                color = BluePrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "${plant.parameter?.minSoilMoisture}-" +
+                                        "${plant.parameter?.maxSoilMoisture}%",
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+                PlantImage(
+                    modifier = Modifier
+                        .weight(5f)
+                        .padding(vertical = 15.dp, horizontal = 5.dp)
+                        .aspectRatio(ratio = 1f)
+                        .clip(RoundedCornerShape(5.dp)),
+                    imageUrl = "https://zenehu.space/api/search/plants/${plant.id}/image"
+                )
+            }
+            if (isSaveable) {
                 IconButton(
-                    modifier = Modifier.align(Alignment.Top),
                     onClick = {
                         scope.launch {
                             savedViewModel.toastMessage.collect {
@@ -121,74 +166,69 @@ fun PlantCard(
                         isSaved.value = !isSaved.value
                         if (isSaved.value) {
                             savedViewModel.savePlant(plant)
-
                         } else {
                             savedViewModel.delPlant(plant)
                         }
                     },
                     content = {
                         Icon(
-                            painter = rememberVectorPainter
-                                (image = if (isSaved.value)
-                                    Icons.Default.Bookmark else Icons.Default.BookmarkBorder),
+                            painter = rememberVectorPainter(
+                                image = if (isSaved.value)
+                                    Icons.Default.Bookmark else Icons.Default.BookmarkBorder
+                            ),
                             contentDescription = null,
-                            tint = Color.Black,
-                            modifier = Modifier.size(20.dp)
+                            tint = Color.Black
                         )
-
-                    }
-                )
-                Column(
+                    },
                     modifier = Modifier
-                        .padding(10.dp)
-                        .width(140.dp)
-                ) {
-                    Text(
-                        text = plant.displayPid ?: "-",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                AsyncImage(
-                    model = imageRequest,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(5.dp)),
-                    contentScale = ContentScale.Crop,
+                        .padding(5.dp)
+                        .align(Alignment.TopEnd)
+                        .size(20.dp)
                 )
             }
-
             if (isInFolder && folder != null) {
-                Box(modifier = Modifier.align(Alignment.BottomStart)) {
-                    IconButton(onClick = {
+                IconButton(
+                    onClick = {
                         scope.launch {
                             folderViewModel.delPlantsFromFolder(folder, plant)
                             folderViewModel.message.collect {
                                 Toast.makeText(context, it, LENGTH_SHORT).show()
                             }
                         }
-                    }) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Default.Delete),
-                            contentDescription = null
-                        )
-                    }
+                    },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.BottomEnd)
+                        .size(20.dp)
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(image = Icons.Default.Delete),
+                        contentDescription = null
+                    )
                 }
             } else {
-                Box(modifier = Modifier.align(Alignment.BottomStart)) {
-                    val showDialog =  remember { mutableStateOf(false) }
+                val showDialog = remember { mutableStateOf(false) }
 
-                    IconButton(onClick = { showDialog.value = !showDialog.value }) {
-                        Icon(painter = rememberVectorPainter(image = Icons.Default.Add),
-                            contentDescription = null)
-                    }
+                IconButton(
+                    onClick = { showDialog.value = !showDialog.value },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.BottomEnd)
+                        .size(20.dp)
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(image = Icons.Default.Add),
+                        contentDescription = null
+                    )
+                }
 
-                    if(showDialog.value)
-                        FoldersMenu(plant = plant, setShowDialog = {
+                if (showDialog.value) {
+                    FoldersMenu(
+                        plant = plant,
+                        setShowDialog = {
                             showDialog.value = it
-                        })
+                        }
+                    )
                 }
             }
         }

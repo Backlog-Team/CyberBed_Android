@@ -55,10 +55,6 @@ fun FolderCard(folder: Folder) {
         colors = CardDefaults.cardColors(
             containerColor = GreenBackground
         ),
-        /*border = BorderStroke(
-            1.dp,
-            GreenPrimary
-        )*/
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -82,8 +78,6 @@ fun FolderCard(folder: Folder) {
                             )
                         }
                     )
-
-
                 Column(
                     modifier = Modifier
                         .padding(10.dp)

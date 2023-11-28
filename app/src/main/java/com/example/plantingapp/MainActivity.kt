@@ -3,7 +3,6 @@ package com.example.plantingapp
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
@@ -11,19 +10,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.plantingapp.management.PermissionsManager
-import com.example.plantingapp.ui.screens.auth.SplashScreen
+import com.example.plantingapp.ui.screens.auth.intro.SplashScreen
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.REQUEST_ENABLE_BT
-import com.example.plantingapp.ui.theme.PlantingAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.scope.Scope
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AndroidScopeComponent {
+    override val scope: Scope by activityScope()
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i("kilo", this.resources.configuration.screenWidthDp.toString())
         super.onCreate(savedInstanceState)
-        val pm = PermissionsManager(this)
+
+        val pm: PermissionsManager = scope.get()//PermissionsManager(this)
         pm.requestBtPermission()
         pm.requestCameraPermission()
         val btViewModel = getViewModel<BluetoothViewModel>()
@@ -50,5 +53,10 @@ class MainActivity : ComponentActivity() {
                 Navigator(SplashScreen(getViewModel()))
             }
         //}
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.close()
     }
 }

@@ -2,15 +2,20 @@ package com.example.plantingapp.di
 
 import android.util.Log
 import android.webkit.CookieManager
+import com.example.plantingapp.MainActivity
 import com.example.plantingapp.data.remote.PlantApi
 import com.example.plantingapp.data.repository.PlantRepository
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
+import com.example.plantingapp.management.NavbarManager
+import com.example.plantingapp.management.PermissionsManager
 import com.example.plantingapp.ui.screens.auth.AuthViewModel
-import com.example.plantingapp.ui.screens.camera.CameraViewModel
 import com.example.plantingapp.ui.screens.explore.ExploreViewModel
+import com.example.plantingapp.ui.screens.explore.custom.create.CustomCreateViewModel
+import com.example.plantingapp.ui.screens.explore.custom.plants.CustomViewModel
 import com.example.plantingapp.ui.screens.explore.search.SearchViewModel
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
+import com.example.plantingapp.ui.screens.scan.ScanViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import okhttp3.Cookie
 import okhttp3.CookieJar
@@ -28,13 +33,6 @@ val appModule = module {
 
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BASIC
-/*
-        fun Context.createCookieStore(name: String, persistent: Boolean) = if (persistent) {
-            SharedPreferencesCookieStore(applicationContext, name)
-        } else {
-            InMemoryCookieStore(name)
-        }
-        */
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(logger)
             .cookieJar(
@@ -82,12 +80,20 @@ val appModule = module {
 
         PlantRepository(api)
     }
+    single { NavbarManager() }
+
+    scope<MainActivity> {
+        scoped { PermissionsManager(get()) }
+    }
 
     viewModel { FoldersViewModel(get()) }
-    viewModel { CameraViewModel(get()) }
+    viewModel { ScanViewModel(get()) }
     viewModel { BluetoothViewModel() }
     viewModel { AuthViewModel(get()) }
     viewModel { ExploreViewModel(get()) }
     viewModel { SearchViewModel(get()) }
     viewModel { SavedViewModel(get()) }
+    viewModel { CustomViewModel(get()) }
+    viewModel { CustomCreateViewModel(get()) }
+
 }

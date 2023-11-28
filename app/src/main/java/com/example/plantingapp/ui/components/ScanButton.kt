@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import com.example.plantingapp.R
-import com.example.plantingapp.ui.screens.camera.CameraTab
+import com.example.plantingapp.ui.screens.scan.ScanTab
 import com.example.plantingapp.ui.theme.GreenBackground
 import com.example.plantingapp.ui.theme.GreenPrimary
 
@@ -30,7 +30,7 @@ fun ScanButton() {
             .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp))
             .background(GreenBackground)
-            .clickable { tabNavigator.current = CameraTab },
+            .clickable { tabNavigator.current = ScanTab },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {

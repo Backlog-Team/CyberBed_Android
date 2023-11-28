@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.auth
+package com.example.plantingapp.ui.screens.auth.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,8 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.plantingapp.ui.LoadingStates
+import com.example.plantingapp.ui.components.containers.NestedView
+import com.example.plantingapp.ui.states.LoadingStates
 import com.example.plantingapp.ui.screens.BaseScreen
+import com.example.plantingapp.ui.screens.auth.AuthViewModel
 import com.example.plantingapp.ui.screens.auth.components.PasswordField
 
 @Composable
@@ -66,68 +68,72 @@ fun SignupView(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 40.dp, vertical = 120.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    NestedView(
+        onClose = { navigator.pop() }
     ) {
-        Text(
-            text = "CyberBed",
-            fontWeight = FontWeight.Medium,
-            fontSize = 24.sp
-        )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = username,
-            onValueChange = { username = it },
-            label = {
-                Text("Username")
-            }
-        )
-        PasswordField(
-            password = password,
-            onValueChange = { password = it },
-            visibility = passwordVisibility,
-            onVisibilityChange = { passwordVisibility = !passwordVisibility })
-
-        PasswordField(
-            label = "Repeat",
-            password = passwordRepeat,
-            onValueChange = { passwordRepeat = it },
-            visibility = passwordRepeatVisibility,
-            onVisibilityChange = { passwordRepeatVisibility = !passwordRepeatVisibility })
-
-        if (!passwordsEqual) {
-            Text(
-                text = "Пароли не совпадают",
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.Red
-            )
-        }
-        if (showErrMsg) {
-            Text(
-                text = errMsg.value,
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.Red
-            )
-        }
-        if (loading) {
-            CircularProgressIndicator()
-        }
-        Button(
-            onClick = {
-                if (password == passwordRepeat)
-                    viewModel.signup(username, password)
-                else {
-                    passwordsEqual = false
-
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 40.dp, vertical = 120.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Войти")
+            Text(
+                text = "CyberBed",
+                fontWeight = FontWeight.Medium,
+                fontSize = 24.sp
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = username,
+                onValueChange = { username = it },
+                label = {
+                    Text("Username")
+                }
+            )
+            PasswordField(
+                password = password,
+                onValueChange = { password = it },
+                visibility = passwordVisibility,
+                onVisibilityChange = { passwordVisibility = !passwordVisibility })
+
+            PasswordField(
+                label = "Repeat",
+                password = passwordRepeat,
+                onValueChange = { passwordRepeat = it },
+                visibility = passwordRepeatVisibility,
+                onVisibilityChange = { passwordRepeatVisibility = !passwordRepeatVisibility })
+
+            if (!passwordsEqual) {
+                Text(
+                    text = "Пароли не совпадают",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Red
+                )
+            }
+            if (showErrMsg) {
+                Text(
+                    text = errMsg.value,
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Red
+                )
+            }
+            if (loading) {
+                CircularProgressIndicator()
+            }
+            Button(
+                onClick = {
+                    if (password == passwordRepeat)
+                        viewModel.signup(username, password)
+                    else {
+                        passwordsEqual = false
+
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Зарегистрироваться")
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.camera
+package com.example.plantingapp.ui.screens.scan
 
 
 import androidx.compose.material.icons.Icons
@@ -11,7 +11,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import org.koin.androidx.compose.getViewModel
 
-object CameraTab : Tab {
+object ScanTab : Tab {
 
     override val options: TabOptions
         @Composable
@@ -30,7 +30,7 @@ object CameraTab : Tab {
 
     @Composable
     override fun Content() {
-        val screenModel = getViewModel<CameraViewModel>()
+        val screenModel = getViewModel<ScanViewModel>()
         Navigator(CameraScreen(screenModel))
     }
 }
