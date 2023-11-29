@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.components
+package com.example.plantingapp.ui.components.dialogs
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Card
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox

@@ -24,47 +24,65 @@ class BluetoothViewModel: ViewModel() {
     var pairedDevices: Set<BluetoothDevice> = setOf()
     var deviceHC05: BluetoothDevice? = null
 
-    private var _message = MutableStateFlow("")
-    var message: StateFlow<String> = _message
+    private var _toast = MutableStateFlow("")
+    var toast: StateFlow<String> = _toast
+
+    fun sendChannel1() {
+        sendMessageToHC("Channel_1")
+    }
+
+    fun sendChannel2() {
+        sendMessageToHC("Channel_2")
+    }
 
     fun sendMessageToHC(message: String) {
         if (pm?.checkBtPermission() == true) {
-            val bluetoothSocket: BluetoothSocket? =
-                deviceHC05?.createInsecureRfcommSocketToServiceRecord(MY_UUID)
-            Log.d("kilo", "Device: ${deviceHC05?.name ?: "-"}")
-            Log.d("kilo", "Socket.isConnected: ${bluetoothSocket?.isConnected ?: "doesn't exist"}")
-            if (bluetoothSocket != null && deviceHC05 != null) {
-                try {
-                    if (!bluetoothSocket.isConnected)
-                        bluetoothSocket.connect()
-                    Log.d(
-                        "kilo",
-                        "BTSocket.isConnected: ${bluetoothSocket.isConnected}"
-                    )
-                    if (bluetoothSocket.isConnected) {
-                        Log.d("kilo", "Open output stream")
-                        val outputStream = bluetoothSocket.outputStream
-                        Log.d("kilo", "Writing data...")
-                        outputStream.write(message.toByteArray())
-                        Log.d("kilo", "Wrote data")
-                        _message.value = "Данные отправлены"
+            if (deviceHC05 != null) {
+                val bluetoothSocket: BluetoothSocket? =
+                    deviceHC05!!.createInsecureRfcommSocketToServiceRecord(MY_UUID)
+                Log.d("kilo", "Device: ${deviceHC05?.name ?: "-"}")
+                Log.d(
+                    "kilo",
+                    "Socket.isConnected: ${bluetoothSocket?.isConnected ?: "doesn't exist"}"
+                )
+                if (bluetoothSocket != null && deviceHC05 != null) {
+                    try {
+                        if (!bluetoothSocket.isConnected)
+                            bluetoothSocket.connect()
+                        Log.d(
+                            "kilo",
+                            "BTSocket.isConnected: ${bluetoothSocket.isConnected}"
+                        )
+                        if (bluetoothSocket.isConnected) {
+                            _toast.value = "Отправляем сигнал..."
 
-                        outputStream.flush()
+                            Log.d("kilo", "Open output stream")
+                            val outputStream = bluetoothSocket.outputStream
+                            Log.d("kilo", "Writing data...")
+                            outputStream.write(message.toByteArray())
+                            Log.d("kilo", "Wrote data: ${message}")
+                            _toast.value = "Сигнал отправлен"
+
+                            outputStream.flush()
+                        }
+                        bluetoothSocket.close()
+                    } catch (exception: IOException) {
+                        bluetoothSocket.close()
+                        _toast.value = "Ошибка подключения к сокету"
+
+                        Log.e("kilo", "IOException при подключении сокета: ${exception}")
+                    } catch (exception: Exception) {
+                        bluetoothSocket.close()
+                        Log.e("kilo", "Exception при подключении сокета: ${exception}")
+                    } catch (exception: Error) {
+                        bluetoothSocket.close()
+                        Log.e("kilo", "Ошибка при подключении сокета: ${exception}")
                     }
-                    bluetoothSocket.close()
-                } catch (exception: IOException) {
-                    bluetoothSocket.close()
-                    Log.e("kilo", "IOException при подключении сокета: ${exception}")
-                } catch (exception: Exception) {
-                    bluetoothSocket.close()
-                    Log.e("kilo", "Exception при подключении сокета: ${exception}")
-                } catch (exception: Error) {
-                    bluetoothSocket.close()
-                    Log.e("kilo", "Ошибка при подключении сокета: ${exception}")
                 }
-            }
-        }
-        _message.value = ""
+            } else _toast.value = "Устройсво не подключено, проверьте настройки"
+
+        } else
+            _toast.value = "Нет разрешения, проверьте настройки"
 
     }
 

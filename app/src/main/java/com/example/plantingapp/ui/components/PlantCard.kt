@@ -1,5 +1,6 @@
 package com.example.plantingapp.ui.components
 
+import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.foundation.clickable
@@ -20,14 +21,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +46,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
+import com.example.plantingapp.ui.components.dialogs.FoldersAdded
+import com.example.plantingapp.ui.components.dialogs.FoldersMenu
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.shared.details.PlantDetailsScreen
@@ -58,7 +59,10 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun PlantCard(
-    plant: Plant
+    plant: Plant,
+    liked: Boolean = false,
+    saved: Boolean = false,
+    folder: Folder? = null
 ) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
@@ -69,20 +73,18 @@ fun PlantCard(
     val scope = rememberCoroutineScope()
 
     var isSaved by remember {
-        mutableStateOf(plant.isSaved!!)
+        mutableStateOf(saved)
     }
     var isLiked by remember {
-        mutableStateOf(plant.isLiked!!)
+        mutableStateOf(liked)
     }
-    var folders by remember {
-        mutableStateOf(plant.folder)
-    }
+
     Card(
         modifier = Modifier
             .padding(5.dp)
             .width(300.dp)
             .height(200.dp)
-            .clickable { navigator?.push(PlantDetailsScreen(plant)) },
+            .clickable { navigator?.push(PlantDetailsScreen(plant, isSaved, folder)) },
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
             containerColor = GrayBackground
@@ -218,8 +220,8 @@ fun PlantCard(
                     }
                 )
             }
-            if (isSaved && folders != null) {
-                val showFolders = remember { mutableStateOf(false) }
+            if (isSaved && folder != null) {
+                /*val showFolders = remember { mutableStateOf(false) }
 
                 if (showFolders.value) {
                     FoldersAdded(
@@ -228,11 +230,12 @@ fun PlantCard(
                             showFolders.value = it
                         }
                     )
-                }
+                }*/
 
                 IconButton(
                     onClick = {
-                        showFolders.value = !showFolders.value
+                              Log.d("kilo", "Show folders")
+                        //showFolders.value = !showFolders.value
                     },
                     modifier = Modifier
                         .padding(5.dp)

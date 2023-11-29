@@ -86,7 +86,7 @@ fun SavedView(
                             ) {
                                 items(plants.size) { index ->
                                     val saved = remember { mutableStateOf(true) }
-                                    PlantCard(plant = plants[index])
+                                    PlantCard(plant = plants[index], true)
                                 }
                             }
                         }

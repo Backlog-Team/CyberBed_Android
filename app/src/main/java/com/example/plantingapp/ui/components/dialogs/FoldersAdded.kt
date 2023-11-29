@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.components
+package com.example.plantingapp.ui.components.dialogs
 
 import android.annotation.SuppressLint
 import android.widget.Toast
