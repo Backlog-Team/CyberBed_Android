@@ -51,12 +51,12 @@ class FoldersUseCase(
         }
     }
 
-    fun addPlantToFolder(folder: Folder, plant: Plant): Flow<Resource<Unit>> = flow {
+    fun addPlantToFolder(folder: Folder, plant: Plant, wateringInterval: String): Flow<Resource<Unit>> = flow {
         try {
 
             emit(Resource.Loading())
 
-            val process = repository.addPlantToFolder(folder.id ?: 0, plant.id)
+            val process = repository.addPlantToFolder(folder.id ?: 0, plant.id, wateringInterval)
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))

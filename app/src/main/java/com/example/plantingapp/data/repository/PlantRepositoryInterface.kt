@@ -60,7 +60,11 @@ interface PlantRepositoryInterface {
         plantID: Int,
         plantName: String,
         about: String,
-        image: Bitmap,
+        image: Bitmap?,
+    ): Response<Unit>
+
+    suspend fun delCustomPlant(
+        plantID: Int
     ): Response<Unit>
 
     //Folders
@@ -73,7 +77,8 @@ interface PlantRepositoryInterface {
 
     suspend fun addPlantToFolder(
         folderID: Int,
-        plantID: Int
+        plantID: Int,
+        wateringInterval: String
     ): Response<Unit>
 
     suspend fun delPlantFromFolder(

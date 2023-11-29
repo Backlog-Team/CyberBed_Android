@@ -19,7 +19,8 @@ class CustomCreateViewModel(
 
     private val _loadingStates = MutableStateFlow(LoadingStates.NotLoading)
     val loadingState = _loadingStates.asStateFlow()
-    private val _created = MutableStateFlow(CustomPlant())
+    private val _message = MutableStateFlow("")
+    val message = _message.asStateFlow()
 
     fun createCustomPlant(name: String, descr: String, image: Bitmap?) {
         viewModelScope.launch {
@@ -32,14 +33,20 @@ class CustomCreateViewModel(
                     when (it) {
                         is Resource.Internet -> {
                             _loadingStates.value = LoadingStates.Error
+                            _message.value = "Ошибка создания"
+
                             it.message
                         }
 
-                        is Resource.Loading -> _loadingStates.value = LoadingStates.Loading
+                        is Resource.Loading -> {
+                            _loadingStates.value = LoadingStates.Loading
+                            _message.value = "Создание..."
+                        }
 
                         is Resource.Success -> {
-                            _created.value = it.data ?: CustomPlant()
                             _loadingStates.value = LoadingStates.Success
+                            _message.value = "Создано успешно"
+
                         }
 
                         else -> _loadingStates.value = LoadingStates.Error
@@ -48,9 +55,10 @@ class CustomCreateViewModel(
         }
     }
 
-    fun changeCustomPlant(name: String, descr: String, image: Bitmap) {
+    fun changeCustomPlant(id: Int, name: String, descr: String, image: Bitmap?) {
         viewModelScope.launch {
-            useCase.createCustomPlant(
+            useCase.changeCustomPlant(
+                plantID = id,
                 plantName = name,
                 about = descr,
                 image = image
@@ -60,13 +68,51 @@ class CustomCreateViewModel(
                         is Resource.Internet -> {
                             _loadingStates.value = LoadingStates.Error
                             it.message
+                            _message.value = "Ошибка изменения"
+
                         }
 
-                        is Resource.Loading -> _loadingStates.value = LoadingStates.Loading
+                        is Resource.Loading -> {
+                            _loadingStates.value = LoadingStates.Loading
+                            _message.value = "Изменение..."
+                        }
 
                         is Resource.Success -> {
-                            _created.value = it.data ?: CustomPlant()
                             _loadingStates.value = LoadingStates.Success
+                            _message.value = "Изменено успешно"
+
+                        }
+
+                        else -> _loadingStates.value = LoadingStates.Error
+                    }
+                }
+        }
+    }
+
+
+    fun delCustomPlant(id: Int) {
+        viewModelScope.launch {
+            useCase.delCustomPlant(
+                plantID = id
+            )
+                .collect {
+                    when (it) {
+                        is Resource.Internet -> {
+                            _loadingStates.value = LoadingStates.Error
+                            _message.value = "Ошибка удаления"
+                            it.message
+                        }
+
+                        is Resource.Loading -> {
+                            _loadingStates.value = LoadingStates.Loading
+                            _message.value = "Удаление..."
+
+                        }
+
+                        is Resource.Success -> {
+                            _loadingStates.value = LoadingStates.Success
+                            _message.value = "Удалено успешно"
+
                         }
 
                         else -> _loadingStates.value = LoadingStates.Error

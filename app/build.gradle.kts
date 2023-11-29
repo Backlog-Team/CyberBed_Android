@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("com.google.android.material:material:1.10.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     //Material
     val materialVersion = "1.1.2"

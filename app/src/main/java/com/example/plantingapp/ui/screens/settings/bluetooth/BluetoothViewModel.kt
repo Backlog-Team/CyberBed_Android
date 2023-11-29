@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.plantingapp.management.PermissionsManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.IOException
 import java.util.UUID
 
@@ -19,63 +21,81 @@ class BluetoothViewModel: ViewModel() {
     var pm: PermissionsManager? = null
 
     val isConnected = mutableStateOf(false)
-    var pairedDevices: Set<BluetoothDevice>? = setOf()
-    private var deviceHC05: BluetoothDevice? = null
+    var pairedDevices: Set<BluetoothDevice> = setOf()
+    var deviceHC05: BluetoothDevice? = null
+
+    private var _message = MutableStateFlow("")
+    var message: StateFlow<String> = _message
 
     fun sendMessageToHC(message: String) {
         if (pm?.checkBtPermission() == true) {
-            val socket: BluetoothSocket? =
+            val bluetoothSocket: BluetoothSocket? =
                 deviceHC05?.createInsecureRfcommSocketToServiceRecord(MY_UUID)
             Log.d("kilo", "Device: ${deviceHC05?.name ?: "-"}")
-            Log.d("kilo", "Socket.isConnected: ${socket?.isConnected ?: "doesn't exist"}")
-            if (socket != null && deviceHC05 != null) {
+            Log.d("kilo", "Socket.isConnected: ${bluetoothSocket?.isConnected ?: "doesn't exist"}")
+            if (bluetoothSocket != null && deviceHC05 != null) {
                 try {
-                    val bluetoothSocket: BluetoothSocket? = deviceHC05!!.javaClass.getMethod(
-                        "createRfcommSocket", Int::class.javaPrimitiveType
-                    ).invoke(deviceHC05, 1) as BluetoothSocket?
+                    if (!bluetoothSocket.isConnected)
+                        bluetoothSocket.connect()
                     Log.d(
                         "kilo",
-                        "BTSocket.isConnected: ${bluetoothSocket?.isConnected ?: "doesn't exist"}"
+                        "BTSocket.isConnected: ${bluetoothSocket.isConnected}"
                     )
-                    if (bluetoothSocket != null) {
-                        bluetoothSocket.connect()
-                        Log.d(
-                            "kilo",
-                            "BTSocket.isConnected: ${bluetoothSocket.isConnected}"
-                        )
-                        if (bluetoothSocket.isConnected) {
-                            Log.d("kilo", "Open output stream")
-                            val outputStream = bluetoothSocket.outputStream
-                            Log.d("kilo", "Writing data...")
-                            outputStream.write(message.toByteArray())
-                            Log.d("kilo", "Wrote data")
-                            outputStream.flush()
-                        }
+                    if (bluetoothSocket.isConnected) {
+                        Log.d("kilo", "Open output stream")
+                        val outputStream = bluetoothSocket.outputStream
+                        Log.d("kilo", "Writing data...")
+                        outputStream.write(message.toByteArray())
+                        Log.d("kilo", "Wrote data")
+                        _message.value = "Данные отправлены"
+
+                        outputStream.flush()
                     }
-                } catch (exception: IOException){
-                    socket.close()
+                    bluetoothSocket.close()
+                } catch (exception: IOException) {
+                    bluetoothSocket.close()
+                    Log.e("kilo", "IOException при подключении сокета: ${exception}")
+                } catch (exception: Exception) {
+                    bluetoothSocket.close()
+                    Log.e("kilo", "Exception при подключении сокета: ${exception}")
+                } catch (exception: Error) {
+                    bluetoothSocket.close()
                     Log.e("kilo", "Ошибка при подключении сокета: ${exception}")
                 }
+            }
+        }
+        _message.value = ""
+
+    }
+
+    fun getPairedDevices() {
+        Log.d("kilo", "bluetoothAdapter?.isEnabled: ${bluetoothAdapter?.isEnabled}")
+        Log.d("kilo", "pm?.checkBtPermission() : ${pm?.checkBtPermission()}")
+        if (bluetoothAdapter?.isEnabled == true && pm?.checkBtPermission() == true) {
+            pairedDevices = bluetoothAdapter?.bondedDevices ?: setOf()
+            for (device in pairedDevices) {
+                Log.d("kilo", device.name)
             }
         }
     }
 
      fun connectToHC(name: String) {
          Log.d("kilo", "bluetoothAdapter?.isEnabled: ${bluetoothAdapter?.isEnabled}")
-         Log.d("kilo", "pm?.checkBtPermission() : ${pm?.checkBtPermission() }")
-        if (bluetoothAdapter?.isEnabled == true && pm?.checkBtPermission() == true) {
-            pairedDevices = bluetoothAdapter?.bondedDevices
+         Log.d("kilo", "pm?.checkBtPermission() : ${pm?.checkBtPermission()}")
+         getPairedDevices()
 
-            if (pairedDevices != null) {
-                for (device in pairedDevices!!) {
-                    Log.d("kilo", device.name)
-                    if (device.name == name) {
-                        isConnected.value = true
-                        deviceHC05 = device
-                        break
-                    }
-                }
-            }
-        }
+         for (device in pairedDevices) {
+             Log.d("kilo", device.name)
+             if (device.name == name) {
+                 isConnected.value = true
+                 deviceHC05 = device
+                 break
+             }
+         }
+     }
+
+    init {
+        getPairedDevices()
+        connectToHC("HC-05")
     }
 }

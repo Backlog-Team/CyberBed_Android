@@ -124,9 +124,14 @@ interface PlantApi {
     suspend fun changeCustomPlant(
         @Path("plantID") plantID: Int,
 
-        @Part plantName: MultipartBody.Part,
-        @Part about: MultipartBody.Part,
-        @Part image: MultipartBody.Part,
+        @Part plantName: MultipartBody.Part?,
+        @Part about: MultipartBody.Part?,
+        @Part image: MultipartBody.Part?,
+    ): Response<Unit>
+
+    @DELETE("api/custom/plants/{plantID}")
+    suspend fun delCustomPlant(
+        @Path("plantID") plantID: Int
     ): Response<Unit>
 
     //Folders
@@ -141,7 +146,8 @@ interface PlantApi {
     @POST("api/folders/{folderID}/plants/{plantID}")
     suspend fun addPlantToFolder(
         @Path("folderID") folderID: Int,
-        @Path("plantID") plantID: Int
+        @Path("plantID") plantID: Int,
+        @Query("wateringTime") wateringInterval: String
     ): Response<Unit>
 
     @DELETE("api/folders/{folderID}/plants/{plantID}")

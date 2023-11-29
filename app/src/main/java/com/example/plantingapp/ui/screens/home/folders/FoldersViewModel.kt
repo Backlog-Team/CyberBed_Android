@@ -47,9 +47,9 @@ class FoldersViewModel(
         }
     }
 
-    fun addPlantToFolder(folder: Folder, plant: Plant) {
+    fun addPlantToFolder(folder: Folder, plant: Plant, wateringInterval: String) {
         viewModelScope.launch {
-            useCase.addPlantToFolder(folder, plant)
+            useCase.addPlantToFolder(folder, plant, wateringInterval)
                 .collect {
                     when (it) {
                         is Resource.Internet -> _message.value = "No internet connection"

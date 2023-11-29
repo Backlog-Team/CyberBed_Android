@@ -135,10 +135,10 @@ class PlantRepository(
         plantID: Int,
         plantName: String,
         about: String,
-        image: Bitmap,
+        image: Bitmap?,
     ): Response<Unit> {
         val stream = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        image?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
         val imagePart = MultipartBody.Part.createFormData(
             "images",
@@ -152,6 +152,10 @@ class PlantRepository(
         return plantApi.changeCustomPlant(plantID, plantPart, descPart, imagePart)
     }
 
+    override suspend fun delCustomPlant(plantID: Int): Response<Unit> {
+        return plantApi.delCustomPlant(plantID)
+    }
+
     //Folders
     override suspend fun createFolder(folderName: String): Response<UserId> {
         return plantApi.createFolder(folderName)
@@ -161,8 +165,12 @@ class PlantRepository(
         return plantApi.getFolders()
     }
 
-    override suspend fun addPlantToFolder(folderID: Int, plantID: Int): Response<Unit> {
-        return plantApi.addPlantToFolder(folderID, plantID)
+    override suspend fun addPlantToFolder(
+        folderID: Int,
+        plantID: Int,
+        wateringInterval: String
+    ): Response<Unit> {
+        return plantApi.addPlantToFolder(folderID, plantID, wateringInterval)
     }
 
     override suspend fun delPlantFromFolder(folderID: Int, plantID: Int): Response<Unit> {

@@ -74,12 +74,33 @@ class CustomUseCase(
         plantID: Int,
         plantName: String,
         about: String,
-        image: Bitmap,
+        image: Bitmap?,
     ): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
 
             val process = repository.changeCustomPlant(plantID, plantName, about, image)
+            Log.d("kilo", process.raw().toString())
+
+            if (process.isSuccessful) {
+                emit(Resource.Success(process.body()))
+            } else {
+                val errMsg = process.errorBody()?.string()
+                emit(Resource.Error.GeneralError(errMsg!!))
+            }
+        } catch (e: IOException) {
+            emit(Resource.Internet("No connection"))
+        }
+    }
+
+
+    fun delCustomPlant(
+        plantID: Int
+    ): Flow<Resource<Unit>> = flow {
+        try {
+            emit(Resource.Loading())
+
+            val process = repository.delCustomPlant(plantID)
             Log.d("kilo", process.raw().toString())
 
             if (process.isSuccessful) {

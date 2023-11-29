@@ -72,7 +72,10 @@ fun CustomView(
                             refreshing, firstItemVisible, scope
                         ) {
                             items(customPlants.size) { index ->
-                                CustomPlantCard(customPlant = customPlants[index])
+                                CustomPlantCard(
+                                    customPlant = customPlants[index],
+                                    getViewModel()
+                                )
                             }
                         }
                     }

@@ -38,7 +38,10 @@ import com.example.plantingapp.ui.components.containers.NestedView
 
 @Composable
 fun CustomCreateView(
-    viewModel: CustomCreateViewModel
+    viewModel: CustomCreateViewModel,
+    isCreate: Boolean,
+    isEdit: Boolean,
+    id: Int?
 ) {
     val loadingState = viewModel.loadingState.collectAsState()
 
@@ -101,13 +104,26 @@ fun CustomCreateView(
             )
 
             Spacer(Modifier.height(50.dp))
-            Button(
-                onClick = {
-                    viewModel.createCustomPlant(name, descr, chosenPic)
-                    navigator.pop()
+            if (isCreate) {
+                Button(
+                    onClick = {
+                        viewModel.createCustomPlant(name, descr, chosenPic)
+                        navigator.pop()
+                    }
+                ) {
+                    Text("Создать свое растение")
                 }
-            ) {
-                Text("Создать свое растение")
+            } else if (isEdit) {
+                Button(
+                    onClick = {
+                        if (id != null) {
+                            viewModel.changeCustomPlant(id, name, descr, chosenPic)
+                        }
+                        navigator.pop()
+                    }
+                ) {
+                    Text("Изменить свое растение")
+                }
             }
         }
     }
