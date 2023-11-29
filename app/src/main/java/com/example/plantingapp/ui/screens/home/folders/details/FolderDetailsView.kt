@@ -66,10 +66,7 @@ fun FolderDetailsView(
                         LazyColumn {
                             items(plants.value.size) { index ->
                                 PlantCard(
-                                    plants.value[index],
-                                    isSaveable = false,
-                                    isInFolder = true,
-                                    folder = folder
+                                    plants.value[index]
                                 )
                             }
                         }

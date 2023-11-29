@@ -12,4 +12,7 @@ data class Plant (
     @SerializedName("display_pid") val displayPid: String? = null,
     @SerializedName("maintenance") val maintenance: Maintenance? = null,
     @SerializedName("parameter") val parameter: Parameter? = null,
-)
+    @SerializedName("isLiked") val isLiked: Boolean? = null,
+    @SerializedName("isSaved") val isSaved: Boolean? = null,
+    @SerializedName("folderSaved") val folder: List<Folder>? = null,
+    )

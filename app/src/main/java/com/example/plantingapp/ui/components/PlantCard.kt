@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,9 +28,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,11 +58,7 @@ import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun PlantCard(
-    plant: Plant,
-    isSaveable: Boolean = true,
-    isSaved: MutableState<Boolean> = mutableStateOf(false),
-    isInFolder: Boolean = false,
-    folder: Folder? = null
+    plant: Plant
 ) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
@@ -68,6 +67,16 @@ fun PlantCard(
     val folderViewModel: FoldersViewModel = getViewModel()
 
     val scope = rememberCoroutineScope()
+
+    var isSaved by remember {
+        mutableStateOf(plant.isSaved!!)
+    }
+    var isLiked by remember {
+        mutableStateOf(plant.isLiked!!)
+    }
+    var folders by remember {
+        mutableStateOf(plant.folder)
+    }
     Card(
         modifier = Modifier
             .padding(5.dp)
@@ -155,16 +164,16 @@ fun PlantCard(
                     imageUrl = "https://zenehu.space/api/search/plants/${plant.id}/image"
                 )
             }
-            if (isSaveable) {
                 IconButton(
                     onClick = {
+                        isLiked = !isLiked
+
                         scope.launch {
                             savedViewModel.toastMessage.collect {
                                 Toast.makeText(context, it, LENGTH_SHORT).show()
                             }
                         }
-                        isSaved.value = !isSaved.value
-                        if (isSaved.value) {
+                        if (isLiked) {
                             savedViewModel.savePlant(plant)
                         } else {
                             savedViewModel.delPlant(plant)
@@ -173,7 +182,7 @@ fun PlantCard(
                     content = {
                         Icon(
                             painter = rememberVectorPainter(
-                                image = if (isSaved.value)
+                                image = if (isLiked)
                                     Icons.Default.Bookmark else Icons.Default.BookmarkBorder
                             ),
                             contentDescription = null,
@@ -185,49 +194,54 @@ fun PlantCard(
                         .align(Alignment.TopEnd)
                         .size(20.dp)
                 )
+
+            val showDialog = remember { mutableStateOf(false) }
+
+            IconButton(
+                onClick = { showDialog.value = !showDialog.value },
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.BottomEnd)
+                    .size(20.dp)
+            ) {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Default.Add),
+                    contentDescription = null
+                )
             }
-            if (isInFolder && folder != null) {
+
+            if (showDialog.value) {
+                FoldersMenu(
+                    plant = plant,
+                    setShowDialog = {
+                        showDialog.value = it
+                    }
+                )
+            }
+            if (isSaved && folders != null) {
+                val showFolders = remember { mutableStateOf(false) }
+
+                if (showFolders.value) {
+                    FoldersAdded(
+                        plant = plant,
+                        setShowDialog = {
+                            showFolders.value = it
+                        }
+                    )
+                }
+
                 IconButton(
                     onClick = {
-                        scope.launch {
-                            folderViewModel.delPlantsFromFolder(folder, plant)
-                            folderViewModel.message.collect {
-                                Toast.makeText(context, it, LENGTH_SHORT).show()
-                            }
-                        }
+                        showFolders.value = !showFolders.value
                     },
                     modifier = Modifier
                         .padding(5.dp)
-                        .align(Alignment.BottomEnd)
+                        .align(Alignment.BottomStart)
                         .size(20.dp)
                 ) {
                     Icon(
-                        painter = rememberVectorPainter(image = Icons.Default.Delete),
+                        painter = rememberVectorPainter(image = Icons.Default.Check),
                         contentDescription = null
-                    )
-                }
-            } else {
-                val showDialog = remember { mutableStateOf(false) }
-
-                IconButton(
-                    onClick = { showDialog.value = !showDialog.value },
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .align(Alignment.BottomEnd)
-                        .size(20.dp)
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Default.Add),
-                        contentDescription = null
-                    )
-                }
-
-                if (showDialog.value) {
-                    FoldersMenu(
-                        plant = plant,
-                        setShowDialog = {
-                            showDialog.value = it
-                        }
                     )
                 }
             }
