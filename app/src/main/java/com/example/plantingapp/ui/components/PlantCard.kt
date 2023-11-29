@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
@@ -234,7 +236,8 @@ fun PlantCard(
 
                 IconButton(
                     onClick = {
-                              Log.d("kilo", "Show folders")
+                        folderViewModel.delPlantsFromFolder(folder, plant)
+                        folderViewModel.getFolders()
                         //showFolders.value = !showFolders.value
                     },
                     modifier = Modifier
@@ -243,7 +246,7 @@ fun PlantCard(
                         .size(20.dp)
                 ) {
                     Icon(
-                        painter = rememberVectorPainter(image = Icons.Default.Check),
+                        painter = rememberVectorPainter(image = Icons.Default.Delete),
                         contentDescription = null
                     )
                 }
