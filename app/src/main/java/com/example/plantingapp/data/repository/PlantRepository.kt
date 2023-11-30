@@ -111,7 +111,7 @@ class PlantRepository(
         image?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
         val imagePart = MultipartBody.Part.createFormData(
-            "images",
+            "image",
             Random.nextUInt(8000000u).toString().plus(".jpg"),
             byteArray.toRequestBody("image/*".toMediaTypeOrNull(), 0, byteArray.size)
         )
@@ -141,7 +141,7 @@ class PlantRepository(
         image?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
         val imagePart = MultipartBody.Part.createFormData(
-            "images",
+            "image",
             Random.nextUInt(8000000u).toString().plus(".jpg"),
             byteArray.toRequestBody("image/*".toMediaTypeOrNull(), 0, byteArray.size)
         )

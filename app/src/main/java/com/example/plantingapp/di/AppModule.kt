@@ -28,14 +28,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
-    single<PlantRepositoryInterface> {
-        val baseUrl = "https://zenehu.space/"
-
-        val logger = HttpLoggingInterceptor()
-        logger.level = HttpLoggingInterceptor.Level.BASIC
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(logger)
-            .cookieJar(
+    single<CookieJar> {
         object:  CookieJar {
             override fun loadForRequest(url: HttpUrl): List<Cookie> {
                 val cookieManager = CookieManager.getInstance()
@@ -68,7 +61,15 @@ val appModule = module {
                 }
             }
         }
-            )
+    }
+    single<PlantRepositoryInterface> {
+        val baseUrl = "https://zenehu.space/"
+
+        val logger = HttpLoggingInterceptor()
+        logger.level = HttpLoggingInterceptor.Level.BASIC
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(logger)
+            .cookieJar(get())
             .build()
 
         val api = Retrofit.Builder()

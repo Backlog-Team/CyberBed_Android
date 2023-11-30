@@ -219,21 +219,22 @@ fun PlantDetailsView(
                 }
 
                 val chooseChannel = remember { mutableStateOf(false) }
-
-                Button(
-                    onClick = { chooseChannel.value = !chooseChannel.value },
-                    modifier = Modifier
-                        .width(180.dp)
-                        .padding(horizontal = 10.dp),
-                ) {
-                    Text("Полить растение")
-                }
-                if (chooseChannel.value) {
-                    ChooseChannel(
-                        setShowDialog = {
-                            chooseChannel.value = it
-                        }
-                    )
+                if (isSaved) {
+                    Button(
+                        onClick = { chooseChannel.value = !chooseChannel.value },
+                        modifier = Modifier
+                            .width(180.dp)
+                            .padding(horizontal = 10.dp),
+                    ) {
+                        Text("Полить растение")
+                    }
+                    if (chooseChannel.value) {
+                        ChooseChannel(
+                            setShowDialog = {
+                                chooseChannel.value = it
+                            }
+                        )
+                    }
                 }
             }
         }
