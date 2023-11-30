@@ -108,7 +108,7 @@ class PlantRepository(
         image: Bitmap?,
     ): Response<CustomPlant> {
         val stream = ByteArrayOutputStream()
-        image?.compress(Bitmap.CompressFormat.JPEG, 80, stream)
+        image?.compress(Bitmap.CompressFormat.JPEG, 50, stream)
         val byteArray = stream.toByteArray()
         val imagePart = MultipartBody.Part.createFormData(
             "image",

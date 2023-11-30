@@ -96,108 +96,112 @@ fun PlantDetailsView(
                 fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
-            Row {
-                Column(
-                    modifier = Modifier.weight(0.5f)
+            Text(
+                text = "Рекомендации",
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+            Row(
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Row(
+                    modifier = Modifier.weight(0.5f).padding(10.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_ruler),
-                            tint = Color.Unspecified,
-                            contentDescription = null,
-                            modifier = Modifier.padding(5.dp)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_ruler),
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    Column {
+                        Text(
+                            text = "Размер",
+                            color = GreenPrimary,
+                            fontWeight = FontWeight.Bold
                         )
-                        Column {
-                            Text(
-                                text = "Высота",
-                                color = GreenPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = plant.maintenance?.size ?: "-",
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_waterdrop),
-                            tint = Color.Unspecified,
-                            contentDescription = null,
-                            modifier = Modifier.padding(5.dp)
+                        Text(
+                            text = plant.maintenance?.size ?: "-",
+                            fontWeight = FontWeight.Medium
                         )
-                        Column {
-                            Text(
-                                text = "Влажность почвы",
-                                color = BluePrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "${plant.parameter?.minSoilMoisture}-" +
-                                        "${plant.parameter?.maxSoilMoisture}%",
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
                     }
                 }
-                Column(
-                    modifier = Modifier.weight(0.5f)
+                Row(
+                    modifier = Modifier.weight(0.5f).padding(10.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_sun),
-                            tint = Color.Unspecified,
-                            contentDescription = null,
-                            modifier = Modifier.padding(5.dp)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_waterdrop),
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Column {
+                        Text(
+                            text = "Влажность почвы",
+                            color = BluePrimary,
+                            fontWeight = FontWeight.Bold
                         )
-                        Column {
-                            Text(
-                                text = "Свет",
-                                color = YellowPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text =
-                                if (plant.parameter?.minLightLux != plant.parameter?.minLightLux)
-                                    "${plant.parameter?.minLightLux}-${plant.parameter?.minLightLux} люкс"
-                                else
-                                    "${plant.parameter?.minLightLux} люкс",
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_temp),
-                            tint = Color.Unspecified,
-                            contentDescription = null,
-                            modifier = Modifier.padding(5.dp)
+                        Text(
+                            text = "${plant.parameter?.minSoilMoisture}-" +
+                                    "${plant.parameter?.maxSoilMoisture}%",
+                            fontWeight = FontWeight.Medium
                         )
-                        Column {
-                            Text(
-                                text = "Влажность воздуа",
-                                color = VioletPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = if (plant.parameter?.minEnvHumidity != plant.parameter?.maxEnvHumidity)
-                                    "${plant.parameter?.minEnvHumidity}-${plant.parameter?.maxEnvHumidity}%"
-                                else
-                                    "${plant.parameter?.maxEnvHumidity}%",
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
                     }
                 }
-
+            }
+            Row(
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Row(
+                    modifier = Modifier.weight(0.5f).padding(10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_sun),
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Column {
+                        Text(
+                            text = "Освещенность",
+                            color = YellowPrimary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text =
+                            if (plant.parameter?.minLightLux != plant.parameter?.minLightLux)
+                                "${plant.parameter?.minLightLux}-${plant.parameter?.minLightLux} люкс"
+                            else
+                                "${plant.parameter?.minLightLux} люкс",
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.weight(0.5f).padding(10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_temp),
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Column {
+                        Text(
+                            text = "Влажность воздуха",
+                            color = VioletPrimary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = if (plant.parameter?.minEnvHumidity != plant.parameter?.maxEnvHumidity)
+                                "${plant.parameter?.minEnvHumidity}-${plant.parameter?.maxEnvHumidity}%"
+                            else
+                                "${plant.parameter?.maxEnvHumidity}%",
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
             Row {
                 val showDialog = remember { mutableStateOf(false) }
