@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.plantingapp.utils.Constants
 
 class PermissionsManager(
     private val activity: ComponentActivity
@@ -40,13 +41,13 @@ class PermissionsManager(
     fun requestBtPermission() {
         when {
             checkBtPermission() -> {
-                Log.i("kilo", "Permission previously granted")
+                Log.i(Constants.DEBUG_TAG, "Permission previously granted")
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,
                 android.Manifest.permission.BLUETOOTH_CONNECT
-            ) -> Log.i("kilo", "Show permissions dialog")
+            ) -> Log.i(Constants.DEBUG_TAG, "Show permissions dialog")
 
             else -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -76,13 +77,13 @@ class PermissionsManager(
     fun requestCameraPermission() {
         when {
             checkCameraPermission() -> {
-                Log.i("kilo", "Permission previously granted")
+                Log.i(Constants.DEBUG_TAG, "Permission previously granted")
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,
                 android.Manifest.permission.CAMERA
-            ) -> Log.i("kilo", "Show permissions dialog")
+            ) -> Log.i(Constants.DEBUG_TAG, "Show permissions dialog")
 
             else -> {
                 ActivityCompat.requestPermissions(

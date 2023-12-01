@@ -137,14 +137,13 @@ fun CameraView(
                 )
                 IconButton(
                     onClick = {
-                        Log.i("kilo", "ON CLICK")
                         viewModel.takePhoto(imageCapture = imageCapture)
                         navigator.push(PlantRecognizedScreen(viewModel))
                     },
                     content = {
                         Icon(
                             imageVector = Icons.Sharp.Lens,
-                            contentDescription = "Take picture",
+                            contentDescription = null,
                             tint = Color.White,
                             modifier = Modifier
                                 .size(100.dp)
@@ -155,12 +154,11 @@ fun CameraView(
 
                 IconButton(
                     onClick = {
-                        Log.i("kilo", "Rotate clicked")
                         viewModel.changeFacing()
                     },
                     content = {
                         Icon(
-                            contentDescription = "Rotate",
+                            contentDescription = null,
                             tint = Color.White,
                             modifier = Modifier
                                 .size(70.dp)

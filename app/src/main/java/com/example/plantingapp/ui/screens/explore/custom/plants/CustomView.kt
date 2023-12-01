@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.plantingapp.ui.components.CustomPlantCard
+import com.example.plantingapp.ui.components.cards.CustomPlantCard
 import com.example.plantingapp.ui.components.TabHeader
 import com.example.plantingapp.ui.components.containers.ItemsList
 import com.example.plantingapp.ui.components.containers.TabView

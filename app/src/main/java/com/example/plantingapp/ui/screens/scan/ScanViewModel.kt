@@ -1,7 +1,6 @@
 package com.example.plantingapp.ui.screens.scan
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -11,8 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.usecases.CameraUseCase
-import com.example.plantingapp.domain.Resource
 import com.example.plantingapp.ui.states.LoadingStates
+import com.example.plantingapp.utils.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,7 +56,6 @@ class ScanViewModel(
     ) {
         imageCapture.takePicture(cameraExecutor, object: ImageCapture.OnImageCapturedCallback() {
             override fun onError(exception: ImageCaptureException) {
-                Log.e("kilo", "Take photo error:", exception)
                 onError(exception)
             }
 

@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.usecases.CustomUseCase
 import com.example.plantingapp.ui.states.LoadingStates

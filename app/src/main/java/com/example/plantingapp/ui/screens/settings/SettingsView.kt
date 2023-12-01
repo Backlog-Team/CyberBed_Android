@@ -9,9 +9,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.SettingsItem
 import com.example.plantingapp.ui.components.containers.TabView
 import com.example.plantingapp.ui.screens.settings.account.AccountScreen
@@ -32,14 +34,10 @@ fun SettingsView() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.settings),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Text(
-                    text = "username",
-                    fontSize = 16.sp
                 )
             }
             if (navigator != null) {
@@ -47,7 +45,7 @@ fun SettingsView() {
                 SettingsItem(
                     navigator = navigator,
                     screen = AccountScreen(getViewModel()),
-                    text = "Profile"
+                    text = stringResource(R.string.profile)
                 )
             }
         }

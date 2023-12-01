@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,12 +47,13 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
-import com.example.plantingapp.ui.components.PlantCard
+import com.example.plantingapp.ui.components.cards.PlantCard
 import com.example.plantingapp.ui.components.containers.TabView
 import com.example.plantingapp.ui.screens.explore.custom.plants.CustomScreen
 import com.example.plantingapp.ui.screens.explore.custom.plants.CustomViewModel
 import com.example.plantingapp.ui.screens.explore.search.SearchField
 import com.example.plantingapp.ui.screens.explore.search.SearchViewModel
+import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -84,7 +86,7 @@ fun ExploreView(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Explore",
+                    text = stringResource(R.string.explore),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -100,7 +102,7 @@ fun ExploreView(
                         content = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_search),
-                                contentDescription = "Search",
+                                contentDescription = null,
                                 tint = Color.Black,
                                 modifier = Modifier
                                     .size(20.dp)
@@ -109,13 +111,13 @@ fun ExploreView(
                     )
                     IconButton(
                         onClick = {
-                            Log.i("kilo", "Add clicked")
+                            Log.i(Constants.DEBUG_TAG, "Add clicked")
                             navigator?.push(CustomScreen(customViewModel))
                         },
                         content = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_add),
-                                contentDescription = "Add",
+                                contentDescription = null,
                                 tint = Color.Black,
                                 modifier = Modifier
                                     .size(20.dp)
@@ -146,9 +148,9 @@ fun ExploreView(
                                 }
                                 if (it.loadState.append is LoadState.Error) {
                                     item {
-                                        Text("LoadingError")
+                                        Text(stringResource(R.string.loading_error))
                                         Button(onClick = { it.retry() }) {
-                                            Text("Retry")
+                                            Text(stringResource(R.string.retry))
                                         }
                                     }
                                 }

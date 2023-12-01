@@ -3,8 +3,9 @@ package com.example.plantingapp.domain.usecases
 import android.graphics.Bitmap
 import android.util.Log
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.CustomPlant
+import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -21,7 +22,7 @@ class CustomUseCase(
             emit(Resource.Loading())
 
             val process = repository.createCustomPlant(plantName, about, image)
-            Log.d("kilo", process.raw().toString())
+            Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
@@ -39,7 +40,7 @@ class CustomUseCase(
             emit(Resource.Loading())
 
             val process = repository.getCustomPlants()
-            Log.d("kilo", process.raw().toString())
+            Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
@@ -57,7 +58,7 @@ class CustomUseCase(
             emit(Resource.Loading())
 
             val process = repository.getCustomPlant(plantId)
-            Log.d("kilo", process.raw().toString())
+            Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
@@ -80,7 +81,7 @@ class CustomUseCase(
             emit(Resource.Loading())
 
             val process = repository.changeCustomPlant(plantID, plantName, about, image)
-            Log.d("kilo", process.raw().toString())
+            Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
@@ -101,7 +102,7 @@ class CustomUseCase(
             emit(Resource.Loading())
 
             val process = repository.delCustomPlant(plantID)
-            Log.d("kilo", process.raw().toString())
+            Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))

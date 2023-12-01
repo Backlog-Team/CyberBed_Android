@@ -17,6 +17,7 @@ import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.scan.ScanViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
+import com.example.plantingapp.utils.Constants
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
@@ -40,7 +41,7 @@ val appModule = module {
                     for (i in splitCookies.indices) {
                         cookies.add(Cookie.parse(url, splitCookies[i].trim { it <= ' ' })!!)
                         Log.e(
-                            "kilo",
+                            Constants.DEBUG_TAG,
                             "loadForRequest :Cookie.add ::  " + Cookie.parse(
                                 url,
                                 splitCookies[i].trim { it <= ' ' })!!
@@ -55,7 +56,7 @@ val appModule = module {
                 for (cookie in cookies) {
                     cookieManager.setCookie(url.toString(), cookie.toString())
                     Log.e(
-                        "kilo",
+                        Constants.DEBUG_TAG,
                         "saveFromResponse :  Cookie url : " + url.toString() + cookie.toString()
                     )
                 }

@@ -10,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.theme.GreenPrimary
 import com.example.plantingapp.ui.theme.UnselectedGray
 
@@ -32,7 +35,11 @@ fun RowScope.TabNavigationItem(tab: Tab, icSelected: Painter, icUnselected: Pain
                     },
                     contentDescription = tab.options.title
         ) },
-        label = { Text(tab.options.title) },
+        label = { Text(
+            text = tab.options.title,
+            fontSize = integerResource(id = R.integer.navbar_item_text_size).sp,
+            letterSpacing = 0.1.sp
+        ) },
         alwaysShowLabel = true,
         colors = NavigationBarItemDefaults.colors(
             selectedIconColor = Color.Unspecified,

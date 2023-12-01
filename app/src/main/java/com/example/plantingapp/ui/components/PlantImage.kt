@@ -6,10 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.plantingapp.R
+import com.example.plantingapp.utils.Constants
 
 @Composable
 fun PlantImage(
@@ -23,7 +25,7 @@ fun PlantImage(
     val context = LocalContext.current
     val placeholderImage = R.drawable.img_placeholder
     val imageRequest = ImageRequest.Builder(context)
-        .setHeader("Cookie", cookie)
+        .setHeader(stringResource(R.string.cookie), cookie)
         .data(imageUrl)
         .memoryCacheKey(imageUrl)
         .diskCacheKey(imageUrl)
@@ -38,8 +40,8 @@ fun PlantImage(
         contentDescription = null,
         modifier = modifier,
         contentScale = ContentScale.Crop,
-        onError = { Log.e("kilo", "Error when loading image: "+ it.result.throwable) },
-        onLoading = { Log.e("kilo", "Loading image: $imageUrl") },
-        onSuccess = { Log.e("kilo", "Loaded image successfully: $imageUrl") },
+        onError = { Log.e(Constants.DEBUG_TAG, "Error when loading image: "+ it.result.throwable) },
+        onLoading = { Log.e(Constants.DEBUG_TAG, "Loading image: $imageUrl") },
+        onSuccess = { Log.e(Constants.DEBUG_TAG, "Loaded image successfully: $imageUrl") },
         )
 }

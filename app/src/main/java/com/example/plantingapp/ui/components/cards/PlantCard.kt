@@ -1,6 +1,5 @@
-package com.example.plantingapp.ui.components
+package com.example.plantingapp.ui.components.cards
 
-import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,15 +38,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
-import com.example.plantingapp.ui.components.dialogs.FoldersAdded
+import com.example.plantingapp.ui.components.PlantImage
 import com.example.plantingapp.ui.components.dialogs.FoldersMenu
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
@@ -111,7 +109,7 @@ fun PlantCard(
                 ) {
                     Text(
                         modifier = Modifier.padding(5.dp),
-                        text = plant.displayPid ?: "-",
+                        text = plant.displayPid ?: stringResource(id = R.string.empty),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -126,12 +124,12 @@ fun PlantCard(
                         )
                         Column {
                             Text(
-                                text = "Высота",
+                                text = stringResource(R.string.size),
                                 color = GreenPrimary,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = plant.maintenance?.size ?: "-",
+                                text = plant.maintenance?.size ?: stringResource(id = R.string.empty),
                                 fontWeight = FontWeight.Medium
                             )
                         }
@@ -147,13 +145,14 @@ fun PlantCard(
                         )
                         Column {
                             Text(
-                                text = "Влажность почвы",
+                                text = stringResource(id = R.string.humidity),
                                 color = BluePrimary,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "${plant.parameter?.minSoilMoisture}-" +
-                                        "${plant.parameter?.maxSoilMoisture}%",
+                                text = if (plant.parameter?.minSoilMoisture != plant.parameter?.maxSoilMoisture)
+                                    "${plant.parameter?.minSoilMoisture}-${plant.parameter?.maxSoilMoisture}%"
+                                else "${plant.parameter?.minSoilMoisture}%",
                                 fontWeight = FontWeight.Medium
                             )
                         }

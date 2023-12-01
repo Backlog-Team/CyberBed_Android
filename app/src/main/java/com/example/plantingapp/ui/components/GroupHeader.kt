@@ -8,10 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.theme.GreenPrimary
 
 @Composable
@@ -28,17 +30,15 @@ fun GroupHeader(title: String, onViewAll: () -> Unit) {
             modifier = Modifier
                 .align(Alignment.CenterVertically),
             fontWeight = FontWeight.Medium,
-            //TODO(fontFamily)
         )
         Text(
-            text = "View all",
+            text = stringResource(R.string.view_all),
             color = GreenPrimary,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-            //TODO(fontFamily)
         )
     }
 }

@@ -35,7 +35,7 @@ fun SettingsItem(navigator: Navigator, screen: Screen, text: String) {
             fontSize = 16.sp)
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_right),
-            contentDescription = "Open screen",
+            contentDescription = null,
             modifier = Modifier
                 .size(15.dp)
                 .align(Alignment.CenterVertically),

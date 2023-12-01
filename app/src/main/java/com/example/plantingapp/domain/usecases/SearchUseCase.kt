@@ -2,8 +2,9 @@ package com.example.plantingapp.domain.usecases
 
 import android.util.Log
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.Plant
+import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -16,7 +17,7 @@ class SearchUseCase(
             emit(Resource.Loading())
 
             val process = name.let { repository.searchPlantByName(it) }
-            Log.d("kilo", process.raw().toString())
+            Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))

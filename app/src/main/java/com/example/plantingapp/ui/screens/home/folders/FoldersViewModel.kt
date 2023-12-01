@@ -3,7 +3,7 @@ package com.example.plantingapp.ui.screens.home.folders
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.usecases.FoldersUseCase

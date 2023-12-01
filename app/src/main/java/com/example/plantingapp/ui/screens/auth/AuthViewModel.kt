@@ -4,11 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.User
 import com.example.plantingapp.domain.models.UserId
 import com.example.plantingapp.domain.usecases.AuthUseCase
 import com.example.plantingapp.ui.states.LoadingStates
+import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -49,7 +50,7 @@ class AuthViewModel(
                         }
 
                         else -> {
-                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            Log.d(Constants.DEBUG_TAG,"Some error: ${it.message}, data: ${it.data}")
                             _loadingStates.value = LoadingStates.Error
                             _message.value = "Ошибка авторизации! Попробуйте еще раз!"
                         }
@@ -64,26 +65,26 @@ class AuthViewModel(
                 .collect {
                     when (it) {
                         is Resource.Internet -> {
-                            Log.d("kilo", "error: ${it.message}, data: ${it.data}")
+                            Log.d(Constants.DEBUG_TAG, "error: ${it.message}, data: ${it.data}")
                             _loadingStates.value = LoadingStates.Error
                         }
 
                         is Resource.Loading -> {
-                            Log.d("kilo", "Loading...")
+                            Log.d(Constants.DEBUG_TAG, "Loading...")
                             _loadingStates.value = LoadingStates.Loading
                             _authState.value = AuthStates.Logging
 
                         }
 
                         is Resource.Success -> {
-                            Log.d("kilo", "Success: $it")
+                            Log.d(Constants.DEBUG_TAG, "Success: $it")
                             _userId.value = it.data ?: UserId()
                             _loadingStates.value = LoadingStates.Success
                             _authState.value = AuthStates.LoggedIn
                         }
 
                         else -> {
-                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            Log.d(Constants.DEBUG_TAG,"Some error: ${it.message}, data: ${it.data}")
                             _loadingStates.value = LoadingStates.Error
                         }
                     }
@@ -107,7 +108,7 @@ class AuthViewModel(
                         }
 
                         else -> {
-                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            Log.d(Constants.DEBUG_TAG,"Some error: ${it.message}, data: ${it.data}")
                             _authState.value = AuthStates.LoggedOut
                         }
                     }
@@ -129,7 +130,7 @@ class AuthViewModel(
                         }
 
                         else -> {
-                            Log.d("kilo","Some error: ${it.message}, data: ${it.data}")
+                            Log.d(Constants.DEBUG_TAG,"Some error: ${it.message}, data: ${it.data}")
                             _loadingStates.value = LoadingStates.Error
                         }
                     }

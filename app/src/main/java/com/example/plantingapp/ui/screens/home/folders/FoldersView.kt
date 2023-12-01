@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.plantingapp.R
+import com.example.plantingapp.utils.Constants
 
 @Composable
 fun FoldersView(
@@ -39,7 +40,7 @@ fun FoldersView(
             )
             IconButton(
                 onClick = {
-                    Log.i("kilo", "Add clicked")
+                    Log.i(Constants.DEBUG_TAG, "Add clicked")
                 },
                 content = {
                     Icon(

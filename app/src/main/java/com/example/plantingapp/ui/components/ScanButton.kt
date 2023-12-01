@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import com.example.plantingapp.R
@@ -36,11 +37,11 @@ fun ScanButton() {
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_scan),
-            contentDescription = "Scan",
+            contentDescription = stringResource(R.string.scan),
             tint = GreenPrimary,
         )
         Text(
-            text = "Scan and identify the plant",
+            text = stringResource(R.string.scan_the_plant),
             color = GreenPrimary,
             modifier = Modifier.padding(10.dp))
     }

@@ -31,9 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.containers.NestedView
 
 @Composable
@@ -73,12 +75,12 @@ fun CustomCreateView(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Название") }
+                label = { Text(stringResource(R.string.title)) }
             )
             OutlinedTextField(
                 value = descr,
                 onValueChange = { descr = it },
-                label = { Text("Описание") }
+                label = { Text(stringResource(R.string.description)) }
             )
             Button(
                 onClick = {
@@ -92,7 +94,7 @@ fun CustomCreateView(
                 },
                 content = {
                     Row {
-                        Text("Добавить изображение")
+                        Text(stringResource(R.string.add_image))
                         Icon(
                             contentDescription = null,
                             tint = Color.White,
@@ -111,7 +113,7 @@ fun CustomCreateView(
                         navigator.pop()
                     }
                 ) {
-                    Text("Создать свое растение")
+                    Text(stringResource(R.string.create_custom_plant))
                 }
             } else if (isEdit) {
                 Button(
@@ -122,7 +124,7 @@ fun CustomCreateView(
                         navigator.pop()
                     }
                 ) {
-                    Text("Изменить свое растение")
+                    Text(stringResource(R.string.change_custom_plant))
                 }
             }
         }

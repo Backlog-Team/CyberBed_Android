@@ -18,9 +18,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
@@ -37,11 +39,6 @@ fun FoldersAdded(
     val folderViewModel: FoldersViewModel = getViewModel()
     val folders = plant.folder
     val scope = rememberCoroutineScope()
-
-    var num by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-    val units = listOf("s", "m", "h", "d")
-    var selectedUnit by remember { mutableStateOf(units[0]) }
     var selectedFolder by remember { mutableStateOf(Folder()) }
 
 
@@ -51,7 +48,7 @@ fun FoldersAdded(
         Card {
             Column(Modifier.padding(5.dp)) {
                 Text(
-                    text = "Добавлено в папки:",
+                    text = stringResource(R.string.added_to_folders),
                     fontSize = 18.sp
                 )
                 Spacer(Modifier.height(10.dp))
@@ -71,7 +68,7 @@ fun FoldersAdded(
                                 },
                                 enabled = (selectedFolder != folder)
                             ) {
-                                Text(folders[index].folderName ?: "-")
+                                Text(folders[index].folderName ?: stringResource(id = R.string.empty))
                             }
                         }
                     }

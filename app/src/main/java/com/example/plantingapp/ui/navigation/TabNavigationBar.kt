@@ -4,6 +4,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.plantingapp.R
 import com.example.plantingapp.ui.screens.explore.ExploreTab
@@ -13,6 +14,7 @@ import com.example.plantingapp.ui.screens.scan.ScanTab
 import com.example.plantingapp.ui.screens.settings.SettingsTab
 
 @Composable
+@Preview(showBackground = false)
 fun TabNavigationBar() {
     NavigationBar(
         containerColor = Color.White,

@@ -18,11 +18,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.containers.NestedView
 import com.example.plantingapp.ui.states.LoadingStates
 import com.example.plantingapp.ui.screens.BaseScreen
@@ -79,7 +81,7 @@ fun SignupView(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "CyberBed",
+                text = stringResource(id = R.string.app_name),
                 fontWeight = FontWeight.Medium,
                 fontSize = 24.sp
             )
@@ -88,7 +90,7 @@ fun SignupView(
                 value = username,
                 onValueChange = { username = it },
                 label = {
-                    Text("Username")
+                    Text(stringResource(id = R.string.username))
                 }
             )
             PasswordField(
@@ -98,7 +100,7 @@ fun SignupView(
                 onVisibilityChange = { passwordVisibility = !passwordVisibility })
 
             PasswordField(
-                label = "Repeat",
+                label = stringResource(R.string.repeat),
                 password = passwordRepeat,
                 onValueChange = { passwordRepeat = it },
                 visibility = passwordRepeatVisibility,
@@ -106,7 +108,7 @@ fun SignupView(
 
             if (!passwordsEqual) {
                 Text(
-                    text = "Пароли не совпадают",
+                    text = stringResource(R.string.passwords_dif),
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.Red
                 )
@@ -132,7 +134,7 @@ fun SignupView(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Зарегистрироваться")
+                Text(stringResource(R.string.sign_up))
             }
         }
     }

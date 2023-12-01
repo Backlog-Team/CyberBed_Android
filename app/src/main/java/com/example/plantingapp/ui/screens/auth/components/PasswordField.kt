@@ -14,13 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.plantingapp.R
 
 @Composable
 fun PasswordField(
-    label: String = "Password",
+    label: String = stringResource(R.string.password),
     password: String = "",
     onValueChange: (String) -> Unit,
     visibility: Boolean = false,
@@ -48,7 +50,7 @@ fun PasswordField(
                     painter = rememberVectorPainter(
                         if (visibility) Icons.Default.Visibility
                     else Icons.Default.VisibilityOff),
-                    contentDescription = "Visibility Icon"
+                    contentDescription = null
                 )
             }
         },

@@ -23,18 +23,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.plantingapp.ui.states.LoadingStates
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.GroupHeader
-import com.example.plantingapp.ui.components.ScanButton
 import com.example.plantingapp.ui.components.containers.TabView
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.home.folders.card.AddFolderCard
 import com.example.plantingapp.ui.screens.home.folders.card.FolderCard
+import com.example.plantingapp.ui.states.LoadingStates
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -56,14 +57,13 @@ fun HomeView() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "My Plants",
+                    text = stringResource(R.string.my_plants),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 )
             }
-            ScanButton()
 
             Row(
                 modifier = Modifier
@@ -72,7 +72,7 @@ fun HomeView() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Folders",
+                    text = stringResource(R.string.folders),
                     fontSize = 18.sp,
                     modifier = Modifier
                         .align(Alignment.CenterVertically),
@@ -110,9 +110,9 @@ fun HomeView() {
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Не удалось загрузить папки")
+                        Text(stringResource(R.string.folders_loading_error))
                         Button(onClick = { foldersViewModel.getFolders() }) {
-                            Text("Попробовать еще раз")
+                            Text(stringResource(id = R.string.retry))
                         }
                     }
                 }
@@ -122,12 +122,12 @@ fun HomeView() {
                 }
 
                 LoadingStates.NotLoading -> {
-                    Text("Загрузка еще не началася")
+                    Text(stringResource(R.string.not_loading_yet))
                 }
             }
             Divider(color = Color.LightGray, thickness = 1.dp)
-            GroupHeader("Notifications") {}
-            Text("Coming soon...")
+            GroupHeader(stringResource(R.string.notifications)) {}
+            Text(stringResource(R.string.coming_soon))
         }
     }
 }

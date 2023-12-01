@@ -2,10 +2,11 @@ package com.example.plantingapp.domain.usecases
 
 import android.util.Log
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.domain.models.UserId
+import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -22,7 +23,7 @@ class FoldersUseCase(
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
             } else {
-                Log.e("kilo", process.raw().toString())
+                Log.e(Constants.DEBUG_TAG, process.raw().toString())
 
                 val errMsg = process.errorBody()?.string()
                 emit(Resource.Error.GeneralError(errMsg!!))
@@ -41,7 +42,7 @@ class FoldersUseCase(
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
             } else {
-                Log.e("kilo", process.raw().toString())
+                Log.e(Constants.DEBUG_TAG, process.raw().toString())
 
                 val errMsg = process.errorBody()?.string()
                 emit(Resource.Error.GeneralError(errMsg!!))
@@ -61,7 +62,7 @@ class FoldersUseCase(
             if (process.isSuccessful) {
                 emit(Resource.Success(process.body()))
             } else {
-                Log.d("kilo", process.raw().toString())
+                Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
                 val errMsg = process.errorBody()?.string()
                 emit(Resource.Error.GeneralError(errMsg!!))
@@ -97,11 +98,11 @@ class FoldersUseCase(
             val process = repository.getPlantsFromFolder(folder.id ?: 0)
 
             if (process.isSuccessful) {
-                Log.d("kilo", process.raw().toString())
+                Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
                 emit(Resource.Success(process.body()))
             } else {
-                Log.d("kilo", process.raw().toString())
+                Log.d(Constants.DEBUG_TAG, process.raw().toString())
 
                 val errMsg = process.errorBody()?.string()
                 emit(Resource.Error.GeneralError(errMsg!!))

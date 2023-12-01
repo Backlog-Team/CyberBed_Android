@@ -21,12 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.states.LoadingStates
 import com.example.plantingapp.ui.screens.BaseScreen
 import com.example.plantingapp.ui.screens.auth.AuthViewModel
@@ -79,7 +81,7 @@ fun LoginView(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "CyberBed",
+            text = stringResource(id = R.string.app_name),
             fontWeight = FontWeight.Medium,
             fontSize = 24.sp
         )
@@ -88,7 +90,7 @@ fun LoginView(
             value = username,
             onValueChange = { username = it },
             label = {
-                Text("Username")
+                Text(stringResource(R.string.username))
             }
         )
         PasswordField(
@@ -112,12 +114,12 @@ fun LoginView(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Войти")
+            Text(stringResource(R.string.log_in))
         }
 
         Text(
             modifier = Modifier.clickable { navigator.push(SignupScreen(viewModel)) },
-            text = "Нет аккаунта? Зарегистрируйтесь!",
+            text = stringResource(R.string.no_account),
             textDecoration = TextDecoration.Underline,
             fontSize = 14.sp
         )

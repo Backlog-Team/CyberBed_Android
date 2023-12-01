@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.ui.states.LoadingStates
-import com.example.plantingapp.ui.components.PlantCard
+import com.example.plantingapp.ui.components.cards.PlantCard
 import com.example.plantingapp.ui.components.containers.TabView
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
 

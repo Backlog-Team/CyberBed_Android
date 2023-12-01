@@ -19,9 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.states.LoadingStates
-import com.example.plantingapp.ui.components.PlantCard
+import com.example.plantingapp.ui.components.cards.PlantCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +51,7 @@ fun SearchField(
             searchActive = it
         },
         placeholder = {
-            Text(text = "Enter your query")
+            Text(text = stringResource(R.string.enter_your_query))
         },
         trailingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = null)
@@ -57,7 +59,7 @@ fun SearchField(
         when (loadingState.value) {
             LoadingStates.Success -> {
                 if (plants.isEmpty()) {
-                    Text("Результатов не найдено")
+                    Text(stringResource(R.string.no_results))
                 } else {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -70,7 +72,7 @@ fun SearchField(
             }
 
             LoadingStates.Error -> {
-                Text("Ошибка поиска")
+                Text(stringResource(R.string.search_error))
             }
 
             LoadingStates.Loading -> {
@@ -83,7 +85,7 @@ fun SearchField(
             }
 
             LoadingStates.NotLoading -> {
-                Text("Попробуйте поиск растения по его названию!")
+                Text(stringResource(R.string.search_intro))
             }
         }
     }

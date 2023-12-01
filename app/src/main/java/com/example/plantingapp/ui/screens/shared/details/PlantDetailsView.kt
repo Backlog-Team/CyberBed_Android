@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,37 +68,37 @@ fun PlantDetailsView(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = plant.displayPid ?: "Название не указано",
+                text = plant.displayPid ?: stringResource(id = R.string.empty),
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 10.dp)
             )
             Text(
-                text = "Описание",
+                text = stringResource(id = R.string.description),
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
 
             )
             Text(
-                text = plant.basic?.floralLanguage ?: "Описание не указано",
+                text = plant.basic?.floralLanguage ?: stringResource(id = R.string.empty),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
             Text(
-                text = "Цветение",
+                text = stringResource(R.string.blooming),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
 
             )
             Text(
-                text = plant.basic?.blooming ?: "Описание не указано",
+                text = plant.basic?.blooming ?: stringResource(id = R.string.empty),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
             Text(
-                text = "Рекомендации",
+                text = stringResource(R.string.recommendations),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
@@ -106,7 +107,9 @@ fun PlantDetailsView(
                 modifier = Modifier.padding(5.dp)
             ) {
                 Row(
-                    modifier = Modifier.weight(0.5f).padding(10.dp)
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(10.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_ruler),
@@ -117,18 +120,20 @@ fun PlantDetailsView(
                     )
                     Column {
                         Text(
-                            text = "Размер",
+                            text = stringResource(id = R.string.size),
                             color = GreenPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = plant.maintenance?.size ?: "-",
+                            text = plant.maintenance?.size ?: stringResource(id = R.string.empty),
                             fontWeight = FontWeight.Medium
                         )
                     }
                 }
                 Row(
-                    modifier = Modifier.weight(0.5f).padding(10.dp)
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(10.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_waterdrop),
@@ -138,13 +143,14 @@ fun PlantDetailsView(
                     )
                     Column {
                         Text(
-                            text = "Влажность почвы",
+                            text = stringResource(R.string.humidity),
                             color = BluePrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "${plant.parameter?.minSoilMoisture}-" +
-                                    "${plant.parameter?.maxSoilMoisture}%",
+                            text = if (plant.parameter?.minSoilMoisture != plant.parameter?.maxSoilMoisture)
+                                "${plant.parameter?.minSoilMoisture}-${plant.parameter?.maxSoilMoisture}%"
+                            else "${plant.parameter?.minSoilMoisture}%",
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -154,7 +160,9 @@ fun PlantDetailsView(
                 modifier = Modifier.padding(5.dp)
             ) {
                 Row(
-                    modifier = Modifier.weight(0.5f).padding(10.dp)
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(10.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_sun),
@@ -164,14 +172,14 @@ fun PlantDetailsView(
                     )
                     Column {
                         Text(
-                            text = "Освещенность",
+                            text = stringResource(R.string.light),
                             color = YellowPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text =
-                            if (plant.parameter?.minLightLux != plant.parameter?.minLightLux)
-                                "${plant.parameter?.minLightLux}-${plant.parameter?.minLightLux} люкс"
+                            if (plant.parameter?.minLightLux != plant.parameter?.maxLightLux)
+                                "${plant.parameter?.minLightLux}-${plant.parameter?.maxLightLux} люкс"
                             else
                                 "${plant.parameter?.minLightLux} люкс",
                             fontWeight = FontWeight.Medium
@@ -179,7 +187,9 @@ fun PlantDetailsView(
                     }
                 }
                 Row(
-                    modifier = Modifier.weight(0.5f).padding(10.dp)
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(10.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_temp),
@@ -189,15 +199,15 @@ fun PlantDetailsView(
                     )
                     Column {
                         Text(
-                            text = "Влажность воздуха",
+                            text = stringResource(R.string.temperature),
                             color = VioletPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = if (plant.parameter?.minEnvHumidity != plant.parameter?.maxEnvHumidity)
-                                "${plant.parameter?.minEnvHumidity}-${plant.parameter?.maxEnvHumidity}%"
+                            text = if (plant.parameter?.minTemp != plant.parameter?.maxTemp)
+                                "${plant.parameter?.minTemp}-${plant.parameter?.maxTemp}°С"
                             else
-                                "${plant.parameter?.maxEnvHumidity}%",
+                                "${plant.parameter?.minTemp}%",
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -211,7 +221,7 @@ fun PlantDetailsView(
                         .width(180.dp)
                         .padding(horizontal = 10.dp),
                 ) {
-                    Text("Добавить")
+                    Text(stringResource(R.string.add))
                 }
                 if (showDialog.value) {
                     FoldersMenu(
@@ -230,7 +240,7 @@ fun PlantDetailsView(
                             .width(180.dp)
                             .padding(horizontal = 10.dp),
                     ) {
-                        Text("Полить растение")
+                        Text(stringResource(R.string.water_plant))
                     }
                     if (chooseChannel.value) {
                         ChooseChannel(

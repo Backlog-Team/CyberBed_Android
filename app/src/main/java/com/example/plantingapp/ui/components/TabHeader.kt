@@ -30,7 +30,7 @@ fun TabHeader(title: String) {
             IconButton(
                 //TODO(onClick)
                 onClick = {
-                    Log.i("kilo", "Search clicked")
+                    Log.i(Constants.DEBUG_TAG, "Search clicked")
                 },
                 content = {
                     Icon(
@@ -45,7 +45,7 @@ fun TabHeader(title: String) {
             IconButton(
                 //TODO(onClick)
                 onClick = {
-                    Log.i("kilo", "Add clicked")
+                    Log.i(Constants.DEBUG_TAG, "Add clicked")
                 },
                 content = {
                     Icon(

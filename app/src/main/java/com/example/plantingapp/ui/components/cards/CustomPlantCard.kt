@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.components
+package com.example.plantingapp.ui.components.cards
 
 import android.util.Log
 import android.widget.Toast
@@ -29,23 +29,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.CustomPlant
+import com.example.plantingapp.ui.components.PlantImage
 import com.example.plantingapp.ui.screens.explore.custom.create.CustomCreateScreen
 import com.example.plantingapp.ui.screens.explore.custom.create.CustomCreateViewModel
 import com.example.plantingapp.ui.theme.GrayBackground
+import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.launch
 
 @Composable
 fun CustomPlantCard(
     customPlant: CustomPlant,
     viewModel: CustomCreateViewModel
-    ) {
-    Log.d("kilo", customPlant.toString())
+) {
+    Log.d(Constants.DEBUG_TAG, customPlant.toString())
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val navigator = LocalNavigator.currentOrThrow
@@ -69,12 +73,12 @@ fun CustomPlantCard(
                 ) {
                     Text(
                         modifier = Modifier.padding(5.dp),
-                        text = customPlant.plantName ?: "Без названия",
+                        text = customPlant.plantName ?: stringResource(id = R.string.empty),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(modifier = Modifier.padding(5.dp),
-                        text = customPlant.about ?: "Описание не указано"
+                        text = customPlant.about ?: stringResource(id = R.string.empty)
                     )
                 }
                 PlantImage(

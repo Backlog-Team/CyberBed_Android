@@ -26,10 +26,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
@@ -50,8 +53,13 @@ fun FoldersMenu(
 
     var num by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-    val units = listOf("s", "m", "h", "d")
-    var selectedUnit by remember { mutableStateOf(units[0]) }
+    val units = mapOf(
+        stringResource(R.string.seconds_abbr) to "s",
+        stringResource(R.string.minutes_abbr) to "m",
+        stringResource(R.string.hours_abbr) to "h",
+        pluralStringResource(R.plurals.days, num.toInt()) to "d"
+    )
+    var selectedUnit by remember { mutableStateOf(units.keys.first()) }
     var selectedFolder by remember { mutableStateOf(Folder()) }
 
 
@@ -61,7 +69,7 @@ fun FoldersMenu(
         Card {
             Column(Modifier.padding(5.dp)) {
                 Text(
-                    text = "Выберите папку:",
+                    text = stringResource(R.string.choose_folder),
                     fontSize = 18.sp
                 )
                 Spacer(Modifier.height(10.dp))
@@ -72,26 +80,26 @@ fun FoldersMenu(
                             onClick = { selectedFolder = folder },
                             enabled = (selectedFolder != folder)
                         ) {
-                            Text(folders[index].folderName ?: "-")
+                            Text(folders[index].folderName ?: stringResource(R.string.empty))
                         }
                     }
                 }
                 Spacer(Modifier.height(20.dp))
 
                 Text(
-                    text = "Интервал полива:",
+                    text = stringResource(R.string.watering_interval),
                     fontSize = 18.sp
                 )
                 Row {
                     TextField(
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(0.7f),
                         value = num,
                         onValueChange = { num = it },
                         keyboardOptions = KeyboardOptions.Default
-                            .copy(keyboardType = KeyboardType.Number),
+                            .copy(keyboardType = KeyboardType.Decimal),
                     )
                     ExposedDropdownMenuBox(
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(0.3f),
                         expanded = expanded,
                         onExpandedChange = {
                             expanded = !expanded
@@ -100,9 +108,8 @@ fun FoldersMenu(
                         // text field
                         TextField(
                             value = selectedUnit,
-                            onValueChange = {},
+                            onValueChange = { selectedUnit = it },
                             readOnly = true,
-                            label = { Text(text = "Label") },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(
                                     expanded = expanded
@@ -120,26 +127,29 @@ fun FoldersMenu(
                             units.forEach { selectedOption ->
                                 // menu item
                                 DropdownMenuItem(onClick = {
-                                    selectedUnit = selectedOption
-                                    Toast.makeText(context, selectedOption, Toast.LENGTH_SHORT)
-                                        .show()
+                                    selectedUnit = selectedOption.key
                                     expanded = false
                                 }) {
-                                    Text(text = selectedOption)
+                                    Text(text = selectedOption.value)
                                 }
                             }
                         }
                     }
                 }
                 Button(onClick = {
-                    foldersViewModel.addPlantToFolder(selectedFolder, plant, "${num}_$selectedUnit")
+                    foldersViewModel.addPlantToFolder(
+                        selectedFolder,
+                        plant,
+                        "${num}_${units[selectedUnit]}"
+                    )
                     scope.launch {
                         foldersViewModel.message.collect {
                             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                         }
                     }
-                    setShowDialog(false) }) {
-                    Text("Добавить в папку")
+                    setShowDialog(false)
+                }) {
+                    Text(stringResource(R.string.add_to_folder))
                 }
             }
         }

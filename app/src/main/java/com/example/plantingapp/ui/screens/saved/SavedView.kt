@@ -1,6 +1,5 @@
 package com.example.plantingapp.ui.screens.saved
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,11 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.states.LoadingStates
-import com.example.plantingapp.ui.components.PlantCard
+import com.example.plantingapp.ui.components.cards.PlantCard
 import com.example.plantingapp.ui.components.containers.TabView
 
 @Composable
@@ -54,7 +55,7 @@ fun SavedView(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Saved",
+                    text = stringResource(R.string.saved),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -79,7 +80,7 @@ fun SavedView(
                             .fillMaxSize()
                     ) {
                         if (plants.isEmpty()) {
-                            Text("Список пуст")
+                            Text(stringResource(R.string.empty_list))
                         } else {
                             LazyColumn(
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -94,15 +95,14 @@ fun SavedView(
                 }
 
                 LoadingStates.Error -> {
-                    Log.d("kilo", "-")
                     Column(
                         modifier = Modifier
                             .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Не удалось загрузить сохраненные растения")
+                        Text(stringResource(R.string.saved_plants_loading_error))
                         Button(onClick = { viewModel.getSavedPlants() }) {
-                            Text("Попробовать еще раз")
+                            Text(stringResource(id = R.string.retry))
                         }
                     }
                 }
@@ -118,7 +118,6 @@ fun SavedView(
                 }
 
                 LoadingStates.NotLoading -> {
-                    Text("Поиск по фото еще не начался")
                 }
             }
         }

@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.plantingapp.data.remote.PlantApi
 import com.example.plantingapp.domain.models.Plant
+import com.example.plantingapp.utils.Constants
 
 class PlantPagingSource(
     private val api: PlantApi,
@@ -20,7 +21,7 @@ class PlantPagingSource(
         return try {
             val page = params.key ?: 1
             val response = api.searchPlants(page = page)
-            Log.d("kilo",response.raw().toString())
+            Log.d(Constants.DEBUG_TAG,response.raw().toString())
 
             LoadResult.Page(
                 data = response.body() ?: listOf(),

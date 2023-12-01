@@ -18,12 +18,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.plantingapp.domain.models.Folder
-import com.example.plantingapp.domain.models.Plant
-import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
+import com.example.plantingapp.R
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -38,7 +37,9 @@ fun ChooseChannel(
 
     val scope = rememberCoroutineScope()
 
-    val channels = listOf("Канал 1", "Канал 2")
+    val channel1 = stringResource(R.string.channel_1)
+    val channel2 = stringResource(R.string.channel_2)
+    val channels = listOf(channel1, channel2)
     var selectedChannel by remember { mutableStateOf("") }
 
     Dialog(
@@ -47,7 +48,7 @@ fun ChooseChannel(
         Card {
             Column(Modifier.padding(5.dp)) {
                 Text(
-                    text = "Выберите канал полива:",
+                    text = stringResource(R.string.choose_channel),
                     fontSize = 18.sp
                 )
                 Spacer(Modifier.height(10.dp))
@@ -58,9 +59,9 @@ fun ChooseChannel(
                             onClick = {
                                 scope.launch {
                                     selectedChannel = channel
-                                    if (selectedChannel == "Канал 1")
+                                    if (selectedChannel == channel1)
                                         btViewModel.sendChannel1()
-                                    else if (selectedChannel == "Канал 2")
+                                    else if (selectedChannel == channel2)
                                         btViewModel.sendChannel2()
                                     btViewModel.toast.collect {
                                         Toast.makeText(context, it, Toast.LENGTH_SHORT).show()

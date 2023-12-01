@@ -2,7 +2,7 @@ package com.example.plantingapp.domain.usecases
 
 import android.graphics.Bitmap
 import com.example.plantingapp.data.repository.PlantRepositoryInterface
-import com.example.plantingapp.domain.Resource
+import com.example.plantingapp.utils.Resource
 import com.example.plantingapp.domain.models.Plant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
