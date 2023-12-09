@@ -25,7 +25,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
-import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
+import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 

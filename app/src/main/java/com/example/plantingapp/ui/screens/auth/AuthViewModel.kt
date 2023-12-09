@@ -46,6 +46,7 @@ class AuthViewModel(
 
                         is Resource.Success -> {
                             _userId.value = it.data ?: UserId()
+                            _loadingStates.value = LoadingStates.Success
                             _authState.value = AuthStates.LoggedIn
                         }
 

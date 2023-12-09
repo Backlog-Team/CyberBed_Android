@@ -1,13 +1,17 @@
 package com.example.plantingapp
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.plantingapp.management.PermissionsManager
 import com.example.plantingapp.ui.screens.auth.intro.SplashScreen

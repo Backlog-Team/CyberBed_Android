@@ -1,10 +1,12 @@
 package com.example.plantingapp.ui.screens.settings.bluetooth
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -18,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.plantingapp.R
 import com.example.plantingapp.management.PermissionsManager
 import com.example.plantingapp.ui.components.containers.TabView
+import com.example.plantingapp.ui.theme.GreenBackground
 import org.koin.androidx.scope.activityScope
 import org.koin.compose.koinInject
 
@@ -38,7 +42,7 @@ fun BluetoothView(viewModel: BluetoothViewModel) {
     val pm: PermissionsManager = koinInject(scope = scope)
     viewModel.getPairedDevices()
     var pairedDevices = viewModel.pairedDevices
-    var deviceName by remember { mutableStateOf("") }
+    var deviceName by remember { mutableStateOf(viewModel.deviceHC05?.name ?: "-") }
     val coroutineScope = rememberCoroutineScope()
 
     TabView {
@@ -69,7 +73,14 @@ fun BluetoothView(viewModel: BluetoothViewModel) {
                     if (pm.checkBtPermission()) {
                         val device = pairedDevices.toList()[index]
                         ListItem(headlineContent = {
-                            Row(horizontalArrangement = Arrangement.SpaceAround) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        if (isConnected.value && deviceName == device.name) GreenBackground else Color.White
+                                    ),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
                                 Text(device.name)
                             }
                         },
@@ -81,20 +92,14 @@ fun BluetoothView(viewModel: BluetoothViewModel) {
                 }
             }
             when (!isConnected.value) {
-            true -> {
-                Text(stringResource(R.string.bt_device_not_connected))
-                Text(stringResource(R.string.connect_bt_device))
-            }
+                true -> {
+                    Text(stringResource(R.string.bt_device_not_connected))
+                    Text(stringResource(R.string.connect_bt_device))
+                }
 
-            false -> {
-                Text(stringResource(R.string.bt_device_connected, deviceName))
-            }
-        }
-            Button(onClick = {
-                viewModel.getPairedDevices()
-                pairedDevices = viewModel.pairedDevices
-            }) {
-                Text(stringResource(R.string.retry_bt_connection))
+                false -> {
+                    Text(stringResource(R.string.bt_device_connected, deviceName))
+                }
             }
         }
     }

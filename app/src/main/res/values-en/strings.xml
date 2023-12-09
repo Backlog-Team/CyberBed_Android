@@ -46,7 +46,7 @@
     <string name="scan_success">Plant recognized successfully!</string>
     <string name="possible_variants">Possible variants:</string>
     <string name="scan_again">Scan again</string><string name="scan_failed">Failed to recognize your plant</string>
-    <string name="profile">Proile</string>
+    <string name="profile">Profile</string>
     <string name="log_out">Log out</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="choose_bt_device">"Choose your device: "</string>
@@ -67,4 +67,6 @@
     <string name="saved">Saved</string>
     <string name="settings">Settings</string>
     <string name="home">Home</string>
+    <string name="folder">Folder: %1$s</string>
+    <string name="plants_amount">Plants: %1$s</string>
 </resources>

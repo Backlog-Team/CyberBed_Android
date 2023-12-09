@@ -13,7 +13,7 @@ import com.example.plantingapp.ui.screens.explore.ExploreViewModel
 import com.example.plantingapp.ui.screens.explore.custom.create.CustomCreateViewModel
 import com.example.plantingapp.ui.screens.explore.custom.plants.CustomViewModel
 import com.example.plantingapp.ui.screens.explore.search.SearchViewModel
-import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
+import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.scan.ScanViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel

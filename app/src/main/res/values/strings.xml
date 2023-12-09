@@ -4,7 +4,7 @@
     <string name="channel_1">Канал 1</string>
     <string name="channel_2">Канал 2</string>
     <string name="choose_channel">Выберите канал полива:</string>
-    <string name="watering_interval">Интервал полива:</string>
+    <string name="watering_interval">Напоминание о поливе:</string>
     <string name="choose_folder">Выберите папку:</string>
     <string name="add_to_folder">Добавить в папку</string>
     <string name="seconds_abbr">с</string>
@@ -71,4 +71,7 @@
     <string name="saved">Избранное</string>
     <string name="settings">Настройки</string>
     <string name="home">Главная</string>
+    <string name="folder">Папка: %1$s</string>
+    <string name="plants_amount">Растений: %1$s</string>
+    <string name="ok" translatable="false">OK</string>
 </resources>

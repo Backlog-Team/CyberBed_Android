@@ -1,13 +1,9 @@
 package com.example.plantingapp.ui.components.dialogs
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -39,10 +35,9 @@ import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun FoldersMenu(
+fun SetNotification(
     plant: Plant,
     setShowDialog: (Boolean) -> Unit
 ) {
@@ -69,24 +64,6 @@ fun FoldersMenu(
         Card {
             Column(Modifier.padding(5.dp)) {
                 Text(
-                    text = stringResource(R.string.choose_folder),
-                    fontSize = 18.sp
-                )
-                Spacer(Modifier.height(10.dp))
-                LazyColumn {
-                    items(folders.size) { index ->
-                        val folder = folders[index]
-                        DropdownMenuItem(
-                            onClick = { selectedFolder = folder },
-                            enabled = (selectedFolder != folder)
-                        ) {
-                            Text(folders[index].folderName ?: stringResource(R.string.empty))
-                        }
-                    }
-                }
-                Spacer(Modifier.height(20.dp))
-
-                Text(
                     text = stringResource(R.string.watering_interval),
                     fontSize = 18.sp
                 )
@@ -94,10 +71,9 @@ fun FoldersMenu(
                     TextField(
                         modifier = Modifier.weight(0.7f),
                         value = num,
-                        onValueChange = { num = if (it.toIntOrNull() != null) it
-                                        else num},
+                        onValueChange = { num = if (it.toIntOrNull() != null) it else num},
                         keyboardOptions = KeyboardOptions.Default
-                            .copy(keyboardType = KeyboardType.Decimal),
+                            .copy(keyboardType = KeyboardType.Decimal)
                     )
                     ExposedDropdownMenuBox(
                         modifier = Modifier.weight(0.3f),

@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.home.folders
+package com.example.plantingapp.ui.screens.folders
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen

@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.home.folders
+package com.example.plantingapp.ui.screens.folders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

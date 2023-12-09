@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,7 +49,7 @@ import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.ui.components.PlantImage
 import com.example.plantingapp.ui.components.dialogs.FoldersMenu
-import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
+import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.shared.details.PlantDetailsScreen
 import com.example.plantingapp.ui.theme.BluePrimary
@@ -60,29 +61,15 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun PlantCard(
     plant: Plant,
-    liked: Boolean = false,
     saved: Boolean = false,
     folder: Folder? = null
 ) {
     val navigator = LocalNavigator.current
-    val context = LocalContext.current
-
-    val savedViewModel: SavedViewModel = getViewModel()
-    val folderViewModel: FoldersViewModel = getViewModel()
-
-    val scope = rememberCoroutineScope()
-
-    var isSaved by remember {
-        mutableStateOf(saved)
-    }
-    var isLiked by remember {
-        mutableStateOf(liked)
-    }
+    val isSaved by remember { mutableStateOf(saved) }
 
     Card(
         modifier = Modifier
-            .padding(5.dp)
-            .width(300.dp)
+            .fillMaxWidth()
             .height(200.dp)
             .clickable { navigator?.push(PlantDetailsScreen(plant, isSaved, folder)) },
         shape = RoundedCornerShape(5.dp),
@@ -103,7 +90,7 @@ fun PlantCard(
             ) {
                 Column(
                     modifier = Modifier
-                        .weight(7f)
+                        .weight(5f)
                         .fillMaxHeight(),
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -129,8 +116,10 @@ fun PlantCard(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = plant.maintenance?.size ?: stringResource(id = R.string.empty),
-                                fontWeight = FontWeight.Medium
+                                text = plant.maintenance?.size
+                                    ?: stringResource(id = R.string.empty),
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.sp
                             )
                         }
                     }
@@ -153,52 +142,33 @@ fun PlantCard(
                                 text = if (plant.parameter?.minSoilMoisture != plant.parameter?.maxSoilMoisture)
                                     "${plant.parameter?.minSoilMoisture}-${plant.parameter?.maxSoilMoisture}%"
                                 else "${plant.parameter?.minSoilMoisture}%",
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.sp
                             )
                         }
                     }
                 }
                 PlantImage(
                     modifier = Modifier
-                        .weight(5f)
+                        .weight(4f)
                         .padding(vertical = 15.dp, horizontal = 5.dp)
                         .aspectRatio(ratio = 1f)
                         .clip(RoundedCornerShape(5.dp)),
                     imageUrl = "https://zenehu.space/api/search/plants/${plant.id}/image"
                 )
             }
-                IconButton(
-                    onClick = {
-                        isLiked = !isLiked
-
-                        scope.launch {
-                            savedViewModel.toastMessage.collect {
-                                Toast.makeText(context, it, LENGTH_SHORT).show()
-                            }
-                        }
-                        if (isLiked) {
-                            savedViewModel.savePlant(plant)
-                        } else {
-                            savedViewModel.delPlant(plant)
-                        }
-                    },
-                    content = {
-                        Icon(
-                            painter = rememberVectorPainter(
-                                image = if (isLiked)
-                                    Icons.Default.Bookmark else Icons.Default.BookmarkBorder
-                            ),
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    },
+            if (isSaved)
+                Icon(
+                    painter = rememberVectorPainter(Icons.Default.Bookmark),
+                    contentDescription = null,
+                    tint = Color.Black,
                     modifier = Modifier
                         .padding(5.dp)
                         .align(Alignment.TopEnd)
                         .size(20.dp)
                 )
 
-            val showDialog = remember { mutableStateOf(false) }
+            /*            val showDialog = remember { mutableStateOf(false) }
 
             IconButton(
                 onClick = { showDialog.value = !showDialog.value },
@@ -249,7 +219,7 @@ fun PlantCard(
                         contentDescription = null
                     )
                 }
-            }
+            }*/
         }
     }
 }

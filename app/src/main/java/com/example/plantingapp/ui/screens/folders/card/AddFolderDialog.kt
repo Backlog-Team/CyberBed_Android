@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.home.folders.card
+package com.example.plantingapp.ui.screens.folders.card
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +14,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
+import com.example.plantingapp.R
+import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -41,8 +43,9 @@ fun AddFolderDialog(
                 Button(onClick = {
                     foldersViewModel.createFolder(folderName)
                     setShowDialog(false)
+                    foldersViewModel.getFolders()
                 }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             }
         }

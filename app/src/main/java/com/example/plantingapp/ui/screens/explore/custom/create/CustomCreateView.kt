@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -45,8 +46,6 @@ fun CustomCreateView(
     isEdit: Boolean,
     id: Int?
 ) {
-    val loadingState = viewModel.loadingState.collectAsState()
-
     val navigator = LocalNavigator.currentOrThrow
     val context = LocalContext.current
 
@@ -61,6 +60,8 @@ fun CustomCreateView(
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             chosenPic = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+            Toast.makeText(context, "Изображение выбрано", Toast.LENGTH_SHORT)
+                .show()
         } else {
             Log.d("PhotoPicker", "No media selected")
         }
@@ -68,7 +69,7 @@ fun CustomCreateView(
 
     NestedView(onClose = { navigator.pop() }) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -87,10 +88,6 @@ fun CustomCreateView(
                     pickMedia.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
-                    chosenPic?.let {
-                        Toast.makeText(context, "Изображение выбрано", Toast.LENGTH_SHORT)
-                            .show()
-                    }
                 },
                 content = {
                     Row {

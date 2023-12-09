@@ -1,7 +1,12 @@
 package com.example.plantingapp.ui.screens.shared.details
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +18,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,11 +49,17 @@ import com.example.plantingapp.ui.components.dialogs.FoldersMenu
 import com.example.plantingapp.ui.components.PlantImage
 import com.example.plantingapp.ui.components.containers.NestedView
 import com.example.plantingapp.ui.components.dialogs.ChooseChannel
+import com.example.plantingapp.ui.components.dialogs.SetNotification
+import com.example.plantingapp.ui.screens.saved.SavedViewModel
+import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import com.example.plantingapp.ui.theme.BluePrimary
 import com.example.plantingapp.ui.theme.GreenPrimary
 import com.example.plantingapp.ui.theme.VioletPrimary
 import com.example.plantingapp.ui.theme.YellowPrimary
+import com.example.plantingapp.utils.Constants.DEBUG_TAG
+import org.koin.androidx.compose.getViewModel
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun PlantDetailsView(
     plant: Plant,
@@ -48,20 +67,31 @@ fun PlantDetailsView(
     folder: Folder? = null
 ) {
     val navigator = LocalNavigator.currentOrThrow
-    NestedView(onClose = { navigator.pop() }) {
+    val savedViewModel: SavedViewModel = getViewModel()
+
+    val textBoxMinHeight = 100.dp
+    var textBoxMaxHeight = 0.dp
+    val localDensity = LocalDensity.current
+
+    var textBoxHeight by remember { mutableStateOf(textBoxMinHeight) }
+
+    NestedView(
+        isDarkBackground = true, onClose = { navigator.pop() },
+        modifier = Modifier.background(Color.Black)
+    ) {
 
         PlantImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(210.dp),
+                .height(260.dp),
             imageUrl = "https://zenehu.space/api/search/plants/${plant.id}/image"
         )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 200.dp)
                 .clip(RoundedCornerShape(0.2f))
+                .padding(top = 250.dp)
                 .background(Color.White)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
@@ -78,25 +108,59 @@ fun PlantDetailsView(
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 modifier = Modifier.padding(horizontal = 10.dp)
+            )
+            Box {
+                Column(
+                    modifier = Modifier
+                        .onPlaced { coordinates ->
+                            textBoxMaxHeight = with(localDensity) { coordinates.size.height.toDp() }
+                        })
+                {
+                    Log.d(DEBUG_TAG, "$textBoxMinHeight-$textBoxMaxHeight")
+                    Text(
+                        text = plant.basic?.floralLanguage ?: stringResource(id = R.string.empty),
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.blooming),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(horizontal = 10.dp)
 
-            )
-            Text(
-                text = plant.basic?.floralLanguage ?: stringResource(id = R.string.empty),
-                fontSize = 16.sp,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-            Text(
-                text = stringResource(R.string.blooming),
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(horizontal = 10.dp)
-
-            )
-            Text(
-                text = plant.basic?.blooming ?: stringResource(id = R.string.empty),
-                fontSize = 16.sp,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
+                    )
+                    Text(
+                        text = plant.basic?.blooming ?: stringResource(id = R.string.empty),
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+                }
+                Text(
+                    text = if (textBoxHeight == textBoxMinHeight) "Подробнее" else "Скрыть",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.1f),
+                                    Color.White.copy(alpha = 0.8f), Color.White
+                                )
+                            )
+                        )
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 10.dp)
+                        .align(Alignment.BottomStart)
+                        .clickable {
+                            textBoxHeight =
+                                if (textBoxHeight == textBoxMinHeight) textBoxMaxHeight + 20.dp
+                                else textBoxMinHeight
+                            Log.d(DEBUG_TAG, "$textBoxMinHeight-$textBoxMaxHeight, $textBoxHeight")
+                        }
+                )
+            }
+            Divider(Modifier.height(1.dp))
             Text(
                 text = stringResource(R.string.recommendations),
                 fontWeight = FontWeight.Medium,
@@ -214,41 +278,44 @@ fun PlantDetailsView(
                 }
             }
             Row {
+                Button(
+                    onClick = { savedViewModel.savePlant(plant) },
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                ) {
+                    Text(stringResource(id = R.string.add))
+                }
                 val showDialog = remember { mutableStateOf(false) }
                 Button(
                     onClick = { showDialog.value = !showDialog.value },
-                    modifier = Modifier
-                        .width(180.dp)
-                        .padding(horizontal = 10.dp),
+                    modifier = Modifier.padding(horizontal = 10.dp),
                 ) {
-                    Text(stringResource(R.string.add))
+                    Text("Хочу!")
                 }
                 if (showDialog.value) {
-                    FoldersMenu(
+                    SetNotification(
                         plant = plant,
                         setShowDialog = {
                             showDialog.value = it
                         }
                     )
                 }
-
+            }
+            if (isSaved) {
                 val chooseChannel = remember { mutableStateOf(false) }
-                if (isSaved) {
-                    Button(
-                        onClick = { chooseChannel.value = !chooseChannel.value },
-                        modifier = Modifier
-                            .width(180.dp)
-                            .padding(horizontal = 10.dp),
-                    ) {
-                        Text(stringResource(R.string.water_plant))
-                    }
-                    if (chooseChannel.value) {
-                        ChooseChannel(
-                            setShowDialog = {
-                                chooseChannel.value = it
-                            }
-                        )
-                    }
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    onClick = { chooseChannel.value = !chooseChannel.value }
+                ) {
+                    Text(stringResource(R.string.water_plant))
+                }
+                if (chooseChannel.value) {
+                    ChooseChannel(
+                        setShowDialog = {
+                            chooseChannel.value = it
+                        }
+                    )
                 }
             }
         }

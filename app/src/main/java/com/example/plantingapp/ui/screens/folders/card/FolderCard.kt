@@ -1,4 +1,4 @@
-package com.example.plantingapp.ui.screens.home.folders.card
+package com.example.plantingapp.ui.screens.folders.card
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,13 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.example.plantingapp.R
 import com.example.plantingapp.domain.models.Folder
-import com.example.plantingapp.ui.screens.home.folders.FoldersViewModel
-import com.example.plantingapp.ui.screens.home.folders.details.FolderDetailsScreen
+import com.example.plantingapp.ui.screens.folders.FoldersViewModel
+import com.example.plantingapp.ui.screens.folders.details.FolderDetailsScreen
+import com.example.plantingapp.ui.theme.GrayBackground
 import com.example.plantingapp.ui.theme.GreenBackground
 import org.koin.androidx.compose.getViewModel
 
@@ -40,9 +43,9 @@ fun FolderCard(folder: Folder) {
 
     Card(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(5.dp)
             .height(80.dp)
-            .width(160.dp)
+            .width(300.dp)
             .clickable {
                 navigator?.push(
                     FolderDetailsScreen(
@@ -50,10 +53,11 @@ fun FolderCard(folder: Folder) {
                         foldersViewModel
                     )
                 )
-            },
+            }
+        ,
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
-            containerColor = GreenBackground
+            containerColor = GrayBackground
         ),
     ) {
         Box(
@@ -64,20 +68,6 @@ fun FolderCard(folder: Folder) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                    IconButton(
-                        modifier = Modifier.align(Alignment.Bottom),
-                        onClick = {
-                            foldersViewModel.delFolder(folder)
-                        },
-                        content = {
-                            Icon(
-                                painter = rememberVectorPainter(Icons.Default.Delete),
-                                contentDescription = null,
-                                tint = Color.Black,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    )
                 Column(
                     modifier = Modifier
                         .padding(10.dp)
@@ -89,11 +79,28 @@ fun FolderCard(folder: Folder) {
                         fontWeight = FontWeight.Medium,
                     )
                     Text(
-                        text = "Растений: ${folder.plantsNum}",
+                        text = stringResource(
+                            R.string.plants_amount,
+                            folder.plantsNum ?: 0
+                        ),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Light,
                     )
                 }
+                IconButton(
+                    modifier = Modifier.align(Alignment.Bottom),
+                    onClick = {
+                        foldersViewModel.delFolder(folder)
+                    },
+                    content = {
+                        Icon(
+                            painter = rememberVectorPainter(Icons.Default.Delete),
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                )
             }
         }
     }

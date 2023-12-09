@@ -49,6 +49,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.plantingapp.R
 import com.example.plantingapp.ui.components.cards.PlantCard
 import com.example.plantingapp.ui.components.containers.TabView
+import com.example.plantingapp.ui.screens.explore.custom.create.CustomCreateScreen
+import com.example.plantingapp.ui.screens.explore.custom.create.CustomCreateViewModel
 import com.example.plantingapp.ui.screens.explore.custom.plants.CustomScreen
 import com.example.plantingapp.ui.screens.explore.custom.plants.CustomViewModel
 import com.example.plantingapp.ui.screens.explore.search.SearchField
@@ -66,7 +68,7 @@ fun ExploreView(
     val lazyListState = rememberLazyListState()
     val plants = viewModel.pagingData.value.collectAsLazyPagingItems()
     val searchViewModel: SearchViewModel = getViewModel()
-    val customViewModel: CustomViewModel = getViewModel()
+    val customViewModel: CustomCreateViewModel = getViewModel()
 
     val refreshing = viewModel.refreshing.value
     val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.refresh(plants) })
@@ -111,8 +113,7 @@ fun ExploreView(
                     )
                     IconButton(
                         onClick = {
-                            Log.i(Constants.DEBUG_TAG, "Add clicked")
-                            navigator?.push(CustomScreen(customViewModel))
+                            navigator?.push(CustomCreateScreen(customViewModel))
                         },
                         content = {
                             Icon(
@@ -166,7 +167,7 @@ fun ExploreView(
                                 item {
                                     Box(modifier = Modifier.fillParentMaxSize()) {
                                         Text(
-                                            "Error",
+                                            stringResource(id = R.string.loading_error),
                                             modifier = Modifier.align(Alignment.Center)
                                         )
                                     }
