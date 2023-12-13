@@ -20,7 +20,7 @@ fun PlantImage(
     cashed: Boolean = true
 ) {
     val cookieManager = CookieManager.getInstance()
-    val cookie = cookieManager.getCookie(imageUrl)
+    val cookie = cookieManager.getCookie(imageUrl) ?:""
 
     val context = LocalContext.current
     val placeholderImage = R.drawable.img_placeholder
@@ -43,5 +43,5 @@ fun PlantImage(
         onError = { Log.e(Constants.DEBUG_TAG, "Error when loading image: "+ it.result.throwable) },
         onLoading = { Log.e(Constants.DEBUG_TAG, "Loading image: $imageUrl") },
         onSuccess = { Log.e(Constants.DEBUG_TAG, "Loaded image successfully: $imageUrl") },
-        )
+    )
 }

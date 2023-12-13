@@ -88,7 +88,6 @@ fun CustomPlantCard(
                         .aspectRatio(ratio = 1f)
                         .clip(RoundedCornerShape(5.dp)),
                     imageUrl = "https://zenehu.space/api/custom/plants/${customPlant.id}/image",
-                    cashed = false
                 )
             }
             IconButton(

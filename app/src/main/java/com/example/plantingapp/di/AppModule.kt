@@ -64,7 +64,7 @@ val appModule = module {
         }
     }
     single<PlantRepositoryInterface> {
-        val baseUrl = "http://88.150.189.101:8080/"
+        val baseUrl = "https://milchenko.online/"
 
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BASIC
