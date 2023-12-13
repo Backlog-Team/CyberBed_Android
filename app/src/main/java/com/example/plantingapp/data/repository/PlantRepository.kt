@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.plantingapp.data.paging.PlantPagingSource
 import com.example.plantingapp.data.remote.PlantApi
+import com.example.plantingapp.domain.models.Channel
 import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
@@ -17,6 +18,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.http.POST
+import retrofit2.http.Path
 import java.io.ByteArrayOutputStream
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -73,8 +76,8 @@ class PlantRepository(
         ).flow
     }
 
-    override suspend fun addPlant(plantID: Int): Response<Unit> {
-        return plantApi.addPlant(plantID)
+    override suspend fun addPlant(plantID: Int, wateringTime: String?): Response<Unit> {
+        return plantApi.addPlant(plantID, wateringTime)
     }
 
     override suspend fun getPlants(): Response<List<Plant>> {
@@ -183,5 +186,33 @@ class PlantRepository(
 
     override suspend fun delFolder(folderID: Int): Response<Unit> {
         return plantApi.delFolder(folderID)
+    }
+
+    override suspend fun saveToDefaultFolder(
+        folderID: Int,
+        plantID: Int,
+    ): Response<Unit> {
+        return plantApi.saveToDefaultFolder(folderID, plantID)
+    }
+
+    override suspend fun changeFolder(
+        fromFolderID: Int,
+        toFolderID: Int,
+        plantID: Int,
+    ): Response<Unit> {
+        return plantApi.changeFolder(fromFolderID, toFolderID, plantID)
+    }
+
+    override suspend fun setChannel(
+        plantID: Int,
+        channelID: Int,
+    ): Response<Unit> {
+        return plantApi.setChannel(plantID, channelID)
+    }
+
+    override suspend fun getChannel(
+        plantID: Int
+    ): Response<Channel> {
+        return plantApi.getChannel(plantID)
     }
 }

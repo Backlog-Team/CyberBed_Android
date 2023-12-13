@@ -99,16 +99,13 @@ fun FoldersView(
                     }
                 )
             }
-            if(showDialog.value)
+            if (showDialog.value)
                 AddFolderDialog(setShowDialog = {
                     showDialog.value = it
                 })
             when (loadingState.value) {
                 LoadingStates.Success -> {
-                    ItemsList(
-                        pullRefreshState, lazyListState,
-                        refreshing, firstItemVisible, scope
-                    ) {
+                    ItemsList({ viewModel.getFolders() }) {
                         items(folders.value.size) { index ->
                             val dismissState = rememberDismissState()
 

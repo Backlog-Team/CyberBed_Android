@@ -42,8 +42,8 @@ fun AddFolderDialog(
                 OutlinedTextField(value = folderName, onValueChange = { folderName = it })
                 Button(onClick = {
                     foldersViewModel.createFolder(folderName)
-                    setShowDialog(false)
                     foldersViewModel.getFolders()
+                    setShowDialog(false)
                 }) {
                     Text(stringResource(R.string.ok))
                 }

@@ -47,7 +47,8 @@ fun FolderItem(folder: Folder, foldersViewModel: FoldersViewModel) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = folder.folderName ?: stringResource(id = R.string.empty),
+        Text(
+            text = (folder.folderName + if (folder.isDefault == true) "✨" else ""),
             fontSize = 16.sp)
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_right),

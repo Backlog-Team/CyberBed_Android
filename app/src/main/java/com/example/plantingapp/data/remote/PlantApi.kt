@@ -1,5 +1,6 @@
 package com.example.plantingapp.data.remote
 
+import com.example.plantingapp.domain.models.Channel
 import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
@@ -72,7 +73,8 @@ interface PlantApi {
     // User's plants
     @POST("api/plants/{plantID}")
     suspend fun addPlant(
-        @Path("plantID") plantID: Int
+        @Path("plantID") plantID: Int,
+        @Query("wateringTime") wateringInterval: String?
     ): Response<Unit>
 
     @GET("api/plants")
@@ -165,5 +167,29 @@ interface PlantApi {
     suspend fun delFolder(
         @Path("folderID") folderID: Int,
     ): Response<Unit>
+
+    @POST("api/folders/{folderID}/default/plants/{plantID}")
+    suspend fun saveToDefaultFolder(
+        @Path("folderID") folderID: Int,
+        @Path("plantID") plantID: Int,
+    ): Response<Unit>
+
+    @POST("api/folders/{fromFolderID}/{toFolderID}/plants/{plantID}")
+    suspend fun changeFolder(
+        @Path("fromFolderID") fromFolderID: Int,
+        @Path("toFolderID") toFolderID: Int,
+        @Path("plantID") plantID: Int,
+    ): Response<Unit>
+
+    @POST("api/plants/{plantID}/chan/{channelID}")
+    suspend fun setChannel(
+        @Path("plantID") plantID: Int,
+        @Path("channelID") channelID: Int,
+    ): Response<Unit>
+
+    @POST("api/plants/{plantID}/chan")
+    suspend fun getChannel(
+        @Path("plantID") plantID: Int,
+    ): Response<Channel>
 }
 

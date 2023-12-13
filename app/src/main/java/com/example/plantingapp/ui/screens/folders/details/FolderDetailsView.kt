@@ -2,6 +2,7 @@ package com.example.plantingapp.ui.screens.folders.details
 
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -49,6 +51,8 @@ import com.example.plantingapp.ui.states.LoadingStates
 import com.example.plantingapp.ui.components.cards.PlantCard
 import com.example.plantingapp.ui.components.containers.ItemsList
 import com.example.plantingapp.ui.components.containers.TabView
+import com.example.plantingapp.ui.components.dialogs.ChooseFolder
+import com.example.plantingapp.ui.components.dialogs.SetNotification
 import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.folders.card.FolderCard
 import com.example.plantingapp.utils.Constants
@@ -66,15 +70,7 @@ fun FolderDetailsView(
     val loadingStates = viewModel.loadingState.collectAsState()
     val plants = viewModel.plants.collectAsState()
 
-    val lazyListState = rememberLazyListState()
-    val refreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.getFolders() })
-    val scope = rememberCoroutineScope()
-    val firstItemVisible by remember {
-        derivedStateOf {
-            lazyListState.firstVisibleItemIndex == 0
-        }
-    }
+
     TabView {
         Column {
             Row(
@@ -104,31 +100,36 @@ fun FolderDetailsView(
                     }
 
                     LoadingStates.Success -> {
-                        ItemsList(
-                            pullRefreshState, lazyListState,
-                            refreshing, firstItemVisible, scope
-                        ) {
+
+                        ItemsList({ viewModel.getFolders() }) {
                             items(plants.value.size) { index ->
+                                val showChooseFolder = remember {mutableStateOf(false)}
+                                if (showChooseFolder.value) {
+                                    ChooseFolder(
+                                        folder,
+                                        plants.value[index]
+                                    ) { showChooseFolder.value = it }
+                                }
                                 val dismissState = rememberDismissState()
 
                                 // check if the user swiped
                                 if (dismissState.isDismissed(direction = DismissDirection.StartToEnd)) {
                                     viewModel.delPlantsFromFolder(folder, plants.value[index])
-                                }
-                                if (dismissState.isDismissed(direction = DismissDirection.EndToStart)) {
-                                    Log.d(Constants.DEBUG_TAG, "Change folder")
-                                }
+                                    viewModel.getPlantFromFolder(folder)
 
+                                }
+                                else if (dismissState.isDismissed(direction = DismissDirection.EndToStart)) {
+                                    showChooseFolder.value = !showChooseFolder.value
+                                    viewModel.getPlantFromFolder(folder)
+
+                                }
                                 SwipeToDismiss(
                                     state = dismissState,
                                     directions = setOf(
                                         DismissDirection.EndToStart,
                                         DismissDirection.StartToEnd,
-                                    ),
+                                        ),
                                     background = {
-                                        // this background is visible when we swipe.
-                                        // it contains the icon
-
                                         // background color
                                         val backgroundColor by animateColorAsState(
                                             when (dismissState.targetValue) {
@@ -139,8 +140,12 @@ fun FolderDetailsView(
                                         )
 
                                         // icon size
-                                        val iconScale by animateFloatAsState(
-                                            targetValue = if (dismissState.targetValue == DismissValue.DismissedToStart) 1.3f else 0.5f
+                                        val iconScale by animateDpAsState(
+                                            targetValue =
+                                            if (dismissState.targetValue ==
+                                                DismissValue.DismissedToEnd || dismissState.targetValue ==
+                                                DismissValue.DismissedToStart) 30.dp else 20.dp,
+                                            label = ""
                                         )
 
                                         Box(
@@ -148,18 +153,21 @@ fun FolderDetailsView(
                                                 .fillMaxSize()
                                                 .background(color = backgroundColor)
                                                 .padding(end = 16.dp), // inner padding
-                                            // place the icon at the end (left)
                                         ) {
+                                            if (dismissState.targetValue == DismissValue.DismissedToEnd)
                                             Icon(
                                                 modifier = Modifier
-                                                    .scale(iconScale)
+                                                    .size(iconScale)
                                                     .align(Alignment.CenterStart),
                                                 imageVector = Icons.Outlined.Delete,
                                                 contentDescription = null,
                                                 tint = Color.Black
                                             )
+                                            else if (dismissState.targetValue == DismissValue.DismissedToStart)
                                             Icon(
-                                                modifier = Modifier.scale(iconScale),
+                                                modifier = Modifier
+                                                    .size(iconScale)
+                                                    .align(Alignment.CenterEnd),
                                                 painter = painterResource(id = R.drawable.ic_folder_replace),
                                                 contentDescription = null,
                                                 tint = Color.Black

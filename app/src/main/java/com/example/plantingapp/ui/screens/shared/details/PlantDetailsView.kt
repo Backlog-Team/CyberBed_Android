@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +52,7 @@ import com.example.plantingapp.ui.components.PlantImage
 import com.example.plantingapp.ui.components.containers.NestedView
 import com.example.plantingapp.ui.components.dialogs.ChooseChannel
 import com.example.plantingapp.ui.components.dialogs.SetNotification
+import com.example.plantingapp.ui.screens.folders.FoldersViewModel
 import com.example.plantingapp.ui.screens.saved.SavedViewModel
 import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import com.example.plantingapp.ui.theme.BluePrimary
@@ -68,13 +71,17 @@ fun PlantDetailsView(
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val savedViewModel: SavedViewModel = getViewModel()
+    val foldersViewModel: FoldersViewModel = getViewModel()
+
 
     val textBoxMinHeight = 100.dp
     var textBoxMaxHeight = 0.dp
     val localDensity = LocalDensity.current
 
     var textBoxHeight by remember { mutableStateOf(textBoxMinHeight) }
+    val channel = savedViewModel.channel.collectAsState()
 
+    val btViewModel: BluetoothViewModel = getViewModel()
     NestedView(
         isDarkBackground = true, onClose = { navigator.pop() },
         modifier = Modifier.background(Color.Black)
@@ -277,45 +284,48 @@ fun PlantDetailsView(
                     }
                 }
             }
-            Row {
-                Button(
-                    onClick = { savedViewModel.savePlant(plant) },
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                ) {
-                    Text(stringResource(id = R.string.add))
+
+            Row (
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                if (!isSaved) {
+                    val showDialog = remember { mutableStateOf(false) }
+                    Button(
+                        onClick = { showDialog.value = !showDialog.value },
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                    ) {
+                        Text(stringResource(id = R.string.add))
+                    }
+                    if (showDialog.value) {
+                        SetNotification(
+                            plant = plant,
+                            setShowDialog = {
+                                showDialog.value = it
+                            }
+                        )
+                    }
                 }
-                val showDialog = remember { mutableStateOf(false) }
-                Button(
-                    onClick = { showDialog.value = !showDialog.value },
-                    modifier = Modifier.padding(horizontal = 10.dp),
-                ) {
-                    Text("Хочу!")
-                }
-                if (showDialog.value) {
-                    SetNotification(
-                        plant = plant,
-                        setShowDialog = {
-                            showDialog.value = it
-                        }
-                    )
+                if (folder == null && !isSaved) {
+                    Button(
+                        onClick = { foldersViewModel.addPlantToFolder(foldersViewModel.folders.value[0],
+                            plant, "") },
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                    ) {
+                        Text("Хочу")
+                    }
                 }
             }
             if (isSaved) {
-                val chooseChannel = remember { mutableStateOf(false) }
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
-                    onClick = { chooseChannel.value = !chooseChannel.value }
+                    onClick = {
+                        savedViewModel.getChannel(plant)
+                        btViewModel.sendChannel(channel.value)
+                    }
                 ) {
                     Text(stringResource(R.string.water_plant))
-                }
-                if (chooseChannel.value) {
-                    ChooseChannel(
-                        setShowDialog = {
-                            chooseChannel.value = it
-                        }
-                    )
                 }
             }
         }

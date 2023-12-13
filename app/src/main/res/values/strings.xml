@@ -74,4 +74,5 @@
     <string name="folder">Папка: %1$s</string>
     <string name="plants_amount">Растений: %1$s</string>
     <string name="ok" translatable="false">OK</string>
+    <string name="save">Сохранить</string>
 </resources>

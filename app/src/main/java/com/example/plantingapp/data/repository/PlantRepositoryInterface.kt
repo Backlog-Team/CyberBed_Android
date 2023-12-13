@@ -2,6 +2,7 @@ package com.example.plantingapp.data.repository
 
 import android.graphics.Bitmap
 import androidx.paging.PagingData
+import com.example.plantingapp.domain.models.Channel
 import com.example.plantingapp.domain.models.CustomPlant
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
@@ -10,6 +11,8 @@ import com.example.plantingapp.domain.models.UserId
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface PlantRepositoryInterface {
     suspend fun auth(): Response<UserId>
@@ -30,7 +33,7 @@ interface PlantRepositoryInterface {
 
     suspend fun loadPlants(): Flow<PagingData<Plant>>
 
-    suspend fun addPlant(plantID: Int): Response<Unit>
+    suspend fun addPlant(plantID: Int, wateringTime: String?): Response<Unit>
 
     suspend fun getPlants(): Response<List<Plant>>
 
@@ -93,4 +96,24 @@ interface PlantRepositoryInterface {
     suspend fun delFolder(
         folderID: Int,
     ): Response<Unit>
+
+    suspend fun saveToDefaultFolder(
+        folderID: Int,
+        plantID: Int,
+    ): Response<Unit>
+
+    suspend fun changeFolder(
+        fromFolderID: Int,
+        toFolderID: Int,
+        plantID: Int,
+    ): Response<Unit>
+
+    suspend fun setChannel(
+        plantID: Int,
+        channelID: Int,
+    ): Response<Unit>
+
+    suspend fun getChannel(
+        plantID: Int,
+    ): Response<Channel>
 }

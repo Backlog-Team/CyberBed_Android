@@ -136,6 +136,27 @@ class FoldersViewModel(
         }
     }
 
+    fun changeFolder(
+        fromFolder: Folder,
+        toFolder: Folder,
+        plant: Plant
+    ) {
+        viewModelScope.launch {
+            useCase.changeFolder(fromFolder, toFolder, plant)
+                .collect {
+                    when (it) {
+                        is Resource.Internet -> _message.value = "No internet connection"
+
+                        is Resource.Loading -> _message.value = "Deleting plant from folder..."
+
+                        is Resource.Success -> _message.value = "Successfully deleted from folder"
+
+                        else -> _message.value = "Error: ${it.message}"
+                    }
+                }
+        }
+    }
+
     init {
         getFolders()
     }

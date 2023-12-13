@@ -67,10 +67,7 @@ fun CustomView(
                     if (customPlants.isEmpty()) {
                         Text("Результатов не найдено")
                     } else {
-                        ItemsList(
-                            pullRefreshState, lazyListState,
-                            refreshing, firstItemVisible, scope
-                        ) {
+                        ItemsList({viewModel.loadCustomPlants()}) {
                             items(customPlants.size) { index ->
                                 CustomPlantCard(
                                     customPlant = customPlants[index],

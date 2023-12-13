@@ -20,7 +20,6 @@ class AuthUseCase(
             val process = repository.auth()
 
             if (process.isSuccessful) {
-                Log.d(Constants.DEBUG_TAG, process.raw().toString())
                 emit(Resource.Success(process.body()))
             } else {
                 Log.d(Constants.DEBUG_TAG, process.raw().toString())
@@ -28,6 +27,7 @@ class AuthUseCase(
                 emit(Resource.Error.GeneralError(errMsg!!))
             }
         } catch (e: IOException) {
+            Log.e(Constants.DEBUG_TAG,"IOException: ${e.message}")
             emit(Resource.Internet("No connection"))
         }
     }

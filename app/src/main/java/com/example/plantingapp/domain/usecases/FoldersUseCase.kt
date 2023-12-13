@@ -130,4 +130,26 @@ class FoldersUseCase(
         }
     }
 
+    fun changeFolder(
+        fromFolder: Folder,
+        toFolder: Folder,
+        plant: Plant,
+    ): Flow<Resource<Unit>> = flow {
+        try {
+            emit(Resource.Loading())
+
+            val process = repository.changeFolder(fromFolder.id ?: 0,
+                toFolder.id ?: 0, plant.id)
+
+            if (process.isSuccessful) {
+                emit(Resource.Success(process.body()))
+            } else {
+                val errMsg = process.errorBody()?.string()
+                emit(Resource.Error.GeneralError(errMsg!!))
+            }
+        } catch (e: IOException) {
+            emit(Resource.Internet("No connection"))
+        }
+    }
+
 }

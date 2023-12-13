@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.plantingapp.domain.models.Channel
 import com.example.plantingapp.management.PermissionsManager
 import com.example.plantingapp.utils.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ class BluetoothViewModel: ViewModel() {
     val isConnected = mutableStateOf(false)
     var pairedDevices: Set<BluetoothDevice> = setOf()
     var deviceHC05: BluetoothDevice? = null
+    var socket: BluetoothSocket? = null
 
     private var _toast = MutableStateFlow("")
     var toast: StateFlow<String> = _toast
@@ -36,7 +38,11 @@ class BluetoothViewModel: ViewModel() {
         sendMessageToHC("Channel_2")
     }
 
-    fun sendMessageToHC(message: String) {
+    fun sendChannel(channel: Channel) {
+        sendMessageToHC("Channel_${channel.channelID}")
+    }
+
+    fun connectToSocket() {
         if (pm?.checkBtPermission() == true) {
             if (deviceHC05 != null) {
                 val bluetoothSocket: BluetoothSocket? =
@@ -55,23 +61,16 @@ class BluetoothViewModel: ViewModel() {
                             "BTSocket.isConnected: ${bluetoothSocket.isConnected}"
                         )
                         if (bluetoothSocket.isConnected) {
-                            _toast.value = "Отправляем сигнал..."
-
-                            Log.d(Constants.DEBUG_TAG, "Open output stream")
-                            val outputStream = bluetoothSocket.outputStream
-                            Log.d(Constants.DEBUG_TAG, "Writing data...")
-                            outputStream.write(message.toByteArray())
-                            Log.d(Constants.DEBUG_TAG, "Wrote data: ${message}")
-                            _toast.value = "Сигнал отправлен"
-
-                            outputStream.flush()
+                            socket = bluetoothSocket
                         }
-                        bluetoothSocket.close()
                     } catch (exception: IOException) {
                         bluetoothSocket.close()
                         _toast.value = "Ошибка подключения к сокету"
 
-                        Log.e(Constants.DEBUG_TAG, "IOException при подключении сокета: ${exception}")
+                        Log.e(
+                            Constants.DEBUG_TAG,
+                            "IOException при подключении сокета: ${exception}"
+                        )
                     } catch (exception: Exception) {
                         bluetoothSocket.close()
                         Log.e(Constants.DEBUG_TAG, "Exception при подключении сокета: ${exception}")
@@ -80,14 +79,33 @@ class BluetoothViewModel: ViewModel() {
                         Log.e(Constants.DEBUG_TAG, "Ошибка при подключении сокета: ${exception}")
                     }
                 }
-            } else _toast.value = "Устройсво не подключено, проверьте настройки"
-
-        } else {
-            _toast.value = "Нет разрешения, проверьте настройки"
+            }
         }
-
     }
 
+    fun sendMessageToHC(message: String) {
+        if (deviceHC05 != null && socket != null) {
+            val outputStream = socket!!.outputStream
+            Log.d(Constants.DEBUG_TAG, "Writing data...")
+            outputStream.write(message.toByteArray())
+            Log.d(Constants.DEBUG_TAG, "Wrote data: ${message}")
+            _toast.value = "Сигнал отправлен"
+
+            outputStream.flush()
+        }
+    }
+
+    fun getMessageFromHC(message: String) {
+        if (deviceHC05 != null && socket != null) {
+            val outputStream = socket!!.outputStream
+            Log.d(Constants.DEBUG_TAG, "Writing data...")
+            outputStream.write(message.toByteArray())
+            Log.d(Constants.DEBUG_TAG, "Wrote data: ${message}")
+            _toast.value = "Сигнал отправлен"
+
+            outputStream.flush()
+        }
+    }
     fun getPairedDevices() {
         Log.d(Constants.DEBUG_TAG, "bluetoothAdapter?.isEnabled: ${bluetoothAdapter?.isEnabled}")
         Log.d(Constants.DEBUG_TAG, "pm?.checkBtPermission() : ${pm?.checkBtPermission()}")
@@ -117,5 +135,6 @@ class BluetoothViewModel: ViewModel() {
     init {
         getPairedDevices()
         connectToHC("HC-05")
+        connectToSocket()
     }
 }

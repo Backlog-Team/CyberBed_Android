@@ -3,7 +3,10 @@ package com.example.plantingapp.ui.components.dialogs
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -29,9 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.plantingapp.R
+import com.example.plantingapp.domain.models.Channel
 import com.example.plantingapp.domain.models.Folder
 import com.example.plantingapp.domain.models.Plant
 import com.example.plantingapp.ui.screens.folders.FoldersViewModel
+import com.example.plantingapp.ui.screens.saved.SavedViewModel
+import com.example.plantingapp.ui.screens.settings.bluetooth.BluetoothViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -42,8 +48,7 @@ fun SetNotification(
     setShowDialog: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    val foldersViewModel: FoldersViewModel = getViewModel()
-    val folders = foldersViewModel.folders.value
+    val savedViewModel: SavedViewModel = getViewModel()
     val scope = rememberCoroutineScope()
 
     var num by remember { mutableStateOf("0") }
@@ -55,14 +60,34 @@ fun SetNotification(
         pluralStringResource(R.plurals.days, num.toInt()) to "d"
     )
     var selectedUnit by remember { mutableStateOf(units.keys.first()) }
-    var selectedFolder by remember { mutableStateOf(Folder()) }
+    val channel1 = stringResource(R.string.channel_1)
+    val channel2 = stringResource(R.string.channel_2)
+    val channels = listOf(channel1, channel2)
+    var selectedChannel by remember { mutableStateOf(channel1) }
 
+    val btViewModel: BluetoothViewModel = getViewModel()
 
     Dialog(
         onDismissRequest = { setShowDialog(false) }
     ) {
         Card {
             Column(Modifier.padding(5.dp)) {
+                Text(
+                    text = stringResource(R.string.choose_channel),
+                    fontSize = 18.sp
+                )
+                Spacer(Modifier.height(10.dp))
+                LazyColumn {
+                    items(channels.size) { index ->
+                        val channel = channels[index]
+                        DropdownMenuItem(
+                            onClick = { selectedChannel = channel },
+                            enabled = (selectedChannel != channel)
+                        ) {
+                            Text(channel ?: stringResource(R.string.empty))
+                        }
+                    }
+                }
                 Text(
                     text = stringResource(R.string.watering_interval),
                     fontSize = 18.sp
@@ -114,19 +139,20 @@ fun SetNotification(
                     }
                 }
                 Button(onClick = {
-                    foldersViewModel.addPlantToFolder(
-                        selectedFolder,
+                    savedViewModel.savePlant(
                         plant,
                         "${num}_${units[selectedUnit]}"
                     )
+                    savedViewModel.setChannel(plant, Channel(if (selectedChannel == channel1)
+                        1 else 2))
                     scope.launch {
-                        foldersViewModel.message.collect {
+                        savedViewModel.toastMessage.collect {
                             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                         }
                     }
                     setShowDialog(false)
                 }) {
-                    Text(stringResource(R.string.add_to_folder))
+                    Text(stringResource(R.string.save))
                 }
             }
         }

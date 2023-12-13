@@ -64,7 +64,7 @@ val appModule = module {
         }
     }
     single<PlantRepositoryInterface> {
-        val baseUrl = "https://zenehu.space/"
+        val baseUrl = "http://88.150.189.101:8080/"
 
         val logger = HttpLoggingInterceptor()
         logger.level = HttpLoggingInterceptor.Level.BASIC
@@ -97,5 +97,4 @@ val appModule = module {
     viewModel { SavedViewModel(get()) }
     viewModel { CustomViewModel(get()) }
     viewModel { CustomCreateViewModel(get()) }
-
 }
