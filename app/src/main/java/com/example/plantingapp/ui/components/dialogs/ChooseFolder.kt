@@ -1,5 +1,6 @@
 package com.example.plantingapp.ui.components.dialogs
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -76,11 +77,6 @@ fun ChooseFolder(
                         selectedFolder,
                         plant
                     )
-                    scope.launch {
-                        foldersViewModel.message.collect {
-                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                        }
-                    }
                     setShowDialog(false)
                 }) {
                     Text(stringResource(R.string.add_to_folder))

@@ -147,6 +147,8 @@ class FoldersUseCase(
                 val errMsg = process.errorBody()?.string()
                 emit(Resource.Error.GeneralError(errMsg!!))
             }
+            Log.e("kilo", process.raw().toString() +" "+ process.body().toString())
+
         } catch (e: IOException) {
             emit(Resource.Internet("No connection"))
         }

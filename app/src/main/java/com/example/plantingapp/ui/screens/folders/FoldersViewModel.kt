@@ -147,9 +147,9 @@ class FoldersViewModel(
                     when (it) {
                         is Resource.Internet -> _message.value = "No internet connection"
 
-                        is Resource.Loading -> _message.value = "Deleting plant from folder..."
+                        is Resource.Loading -> _message.value = "Changing folder..."
 
-                        is Resource.Success -> _message.value = "Successfully deleted from folder"
+                        is Resource.Success -> _message.value = "Successfully changed folder"
 
                         else -> _message.value = "Error: ${it.message}"
                     }

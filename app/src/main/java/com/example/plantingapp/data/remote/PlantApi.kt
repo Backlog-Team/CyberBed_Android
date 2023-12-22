@@ -174,7 +174,7 @@ interface PlantApi {
         @Path("plantID") plantID: Int,
     ): Response<Unit>
 
-    @POST("api/folders/{fromFolderID}/{toFolderID}/plants/{plantID}")
+    @PUT("api/folders/{fromFolderID}/{toFolderID}/plants/{plantID}")
     suspend fun changeFolder(
         @Path("fromFolderID") fromFolderID: Int,
         @Path("toFolderID") toFolderID: Int,

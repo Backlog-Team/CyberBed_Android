@@ -104,24 +104,16 @@ fun FolderDetailsView(
                         ItemsList({ viewModel.getFolders() }) {
                             items(plants.value.size) { index ->
                                 val showChooseFolder = remember {mutableStateOf(false)}
-                                if (showChooseFolder.value) {
-                                    ChooseFolder(
-                                        folder,
-                                        plants.value[index]
-                                    ) { showChooseFolder.value = it }
-                                }
+                                val isDeleted = remember {mutableStateOf(false)}
                                 val dismissState = rememberDismissState()
-
-                                // check if the user swiped
                                 if (dismissState.isDismissed(direction = DismissDirection.StartToEnd)) {
                                     viewModel.delPlantsFromFolder(folder, plants.value[index])
-                                    viewModel.getPlantFromFolder(folder)
-
+                                    isDeleted.value = true
                                 }
-                                else if (dismissState.isDismissed(direction = DismissDirection.EndToStart)) {
-                                    showChooseFolder.value = !showChooseFolder.value
-                                    viewModel.getPlantFromFolder(folder)
-
+                                else if (dismissState.isDismissed(direction = DismissDirection.EndToStart)
+                                    and !isDeleted.value) {
+                                    showChooseFolder.value = true
+                                    isDeleted.value = true
                                 }
                                 SwipeToDismiss(
                                     state = dismissState,
@@ -176,9 +168,16 @@ fun FolderDetailsView(
                                     },
                                     dismissContent = {
                                         // list item
-                                        PlantCard(plants.value[index])
+                                        if (!isDeleted.value)
+                                            PlantCard(plants.value[index])
                                     }
                                 )
+                                if (showChooseFolder.value) {
+                                    ChooseFolder(
+                                        folder,
+                                        plants.value[index]
+                                    ) { showChooseFolder.value = it }
+                                }
                             }
                         }
                     }
